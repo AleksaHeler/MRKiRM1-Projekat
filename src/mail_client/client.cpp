@@ -19,44 +19,34 @@
 #define BUFFER_SIZE 512						// Size of buffer that will be used for sending and receiving messages to client
 
 
-bool is_ipV4_address(sockaddr_in6 address);
-
 int main()
 {
-	// Server address structure
-	sockaddr_in serverAddress;
+	sockaddr_in serverAddress;									/* Server address structure */
+	char dataBuffer[BUFFER_SIZE];								/* Buffer that will be used for sending and receiving messages */
+	WSADATA wsaData;											/* WSADATA data structure that is used to receive details of the Windows Sockets implementation */
+	int iResult = 0;											/* Keep track of functions return result */
 
-	// Size of server address structure
-	int sockAddrLen = sizeof(serverAddress);
-
-	// Buffer that will be used for sending and receiving messages to client
-	char dataBuffer[BUFFER_SIZE];
-
-	// WSADATA data structure that is used to receive details of the Windows Sockets implementation
-	WSADATA wsaData;
-
-	// Initialize windows sockets for this process
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-	// Check if library is succesfully initialized
-	if (iResult != 0)
+	/* Initialize windows sockets for this process */
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
-		printf("WSAStartup failed with error: %d\n", iResult);
+		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
 		return 1;
 	}
 
-	// Initialize address structure of server
-	memset((char*)&serverAddress, 0, sizeof(serverAddress));		// Initialize memory for address structure
-	serverAddress.sin_family = AF_INET;								// IPv4 address famly
-	serverAddress.sin_addr.s_addr = inet_addr(SERVER_IP_ADDRESS);	// Set server IP address using string
-	serverAddress.sin_port = htons(SERVER_PORT);					// Set server port
 
-	// Create a socket
-	SOCKET clientSocket = socket(AF_INET,      // IPv4 address famly
-		SOCK_DGRAM,   // Datagram socket
-		IPPROTO_UDP); // UDP protocol
+	/* Initialize address structure of server */
+	memset((char*)&serverAddress, 0, sizeof(serverAddress));		/* Initialize memory for address structure */
+	serverAddress.sin_family = AF_INET;								/* IPv4 address famly */
+	serverAddress.sin_addr.s_addr = inet_addr(SERVER_IP_ADDRESS);	/* Set server IP address using string */
+	serverAddress.sin_port = htons(SERVER_PORT);					/* Set server port */
 
-	// Check if socket creation succeeded
+
+	/* Create a socket */
+	SOCKET clientSocket = socket(AF_INET,		/* IPv4 address famly */
+		SOCK_DGRAM,								/* Datagram socket */
+		IPPROTO_UDP);							/* UDP protocol */
+
+	/* Check if socket creation succeeded */
 	if (clientSocket == INVALID_SOCKET)
 	{
 		printf("Creating socket failed with error: %d\n", WSAGetLastError());
@@ -64,20 +54,21 @@ int main()
 		return 1;
 	}
 
+
+	/* Main loop */
+	printf("=== UDP client ready to send messages ===\n");
 	while (1)
 	{
 		printf("Enter message to send:\n");
-
-		// Read string from user into outgoing buffer
 		gets_s(dataBuffer, BUFFER_SIZE);
 
 		// Send message to server
-		iResult = sendto(clientSocket,						// Own socket
-			dataBuffer,						// Text of message
-			strlen(dataBuffer),				// Message size
+		iResult = sendto(clientSocket,			// Own socket
+			dataBuffer,							// Text of message
+			strlen(dataBuffer),					// Message size
 			0,									// No flags
-			(SOCKADDR*)&serverAddress,		// Address structure of server (type, IP address and port)
-			sizeof(serverAddress));			// Size of sockadr_in structure
+			(SOCKADDR*)&serverAddress,			// Address structure of server (type, IP address and port)
+			sizeof(serverAddress));				// Size of sockadr_in structure
 
 		// Check if message is succesfully sent. If not, close client application
 		if (iResult == SOCKET_ERROR)
@@ -88,62 +79,49 @@ int main()
 			return 1;
 		}
 
+		/// RECEIVE MSG FROM SERVER /////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////
-		while (1) {
-			// Declare and initialize client address that will be set from recvfrom
-			sockaddr_in6 clientAddress;
-			memset(&clientAddress, 0, sizeof(clientAddress));
+		// Declare and initialize client address that will be set from recvfrom
+		sockaddr_in serverAddress;
+		memset(&serverAddress, 0, sizeof(serverAddress));
+		memset(dataBuffer, 0, BUFFER_SIZE);				// Set whole buffer to zero
+		int sockAddrLen = sizeof(serverAddress);		// size of client address
 
-			// Set whole buffer to zero
-			memset(dataBuffer, 0, BUFFER_SIZE);
-			// size of client address
-			int sockAddrLen = sizeof(clientAddress);
+		// Receive client message
+		iResult = recvfrom(clientSocket,						// Own socket
+			dataBuffer,							// Buffer that will be used for receiving message
+			BUFFER_SIZE,							// Maximal size of buffer
+			0,									// No flags
+			(struct sockaddr*)&serverAddress,	// Client information from received message (ip address and port)
+			&sockAddrLen);						// Size of sockadd_in structure
 
-			// Receive client message
-			iResult = recvfrom(clientSocket,						// Own socket
-				dataBuffer,							// Buffer that will be used for receiving message
-				BUFFER_SIZE,							// Maximal size of buffer
-				0,									// No flags
-				(struct sockaddr*)&clientAddress,	// Client information from received message (ip address and port)
-				&sockAddrLen);						// Size of sockadd_in structure
-
-			// Check if message is succesfully received
-			if (iResult == SOCKET_ERROR)
-			{
-				printf("recvfrom failed with error: %d\n", WSAGetLastError());
-				continue;
-			}
-
-			char ipAddress[INET6_ADDRSTRLEN]; // INET6_ADDRSTRLEN 65 spaces for hexadecimal notation of IPv6
-
-			// Copy client ip to local char[]
-			inet_ntop(clientAddress.sin6_family, &clientAddress.sin6_addr, ipAddress, sizeof(ipAddress));
-
-			// Convert port number from network byte order to host byte order
-			unsigned short clientPort = ntohs(clientAddress.sin6_port);
-
-			bool isIPv4 = is_ipV4_address(clientAddress); //true for IPv4 and false for IPv6
-
-			if (isIPv4) {
-				char ipAddress1[15]; // 15 spaces for decimal notation (for example: "192.168.100.200") + '\0'
-				struct in_addr* ipv4 = (struct in_addr*)&((char*)&clientAddress.sin6_addr.u)[12];
-
-				// Copy client ip to local char[]
-				strcpy_s(ipAddress1, sizeof(ipAddress1), inet_ntoa(*ipv4));
-				printf("IPv4 Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress1, clientPort, dataBuffer);
-			}
-			else
-				printf("IPv6 Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress, clientPort, dataBuffer);
+		// Check if message is succesfully received
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("recvfrom failed with error: %d\n", WSAGetLastError());
+			continue;
 		}
+
+		char ipAddress[INET6_ADDRSTRLEN]; // INET6_ADDRSTRLEN 65 spaces for hexadecimal notation of IPv6
+
+		// Copy client ip to local char[]
+		inet_ntop(serverAddress.sin_family, &serverAddress.sin_addr, ipAddress, sizeof(ipAddress));
+
+		// Convert port number from network byte order to host byte order
+		unsigned short clientPort = ntohs(serverAddress.sin_port);
+
+		char ipAddress1[64]; // 15 spaces for decimal notation (for example: "192.168.100.200") + '\0'
+		struct in_addr* ipv4 = (struct in_addr*)&((char*)&serverAddress.sin_addr)[12];
+
+		// Copy client ip to local char[]
+		strcpy_s(ipAddress1, sizeof(ipAddress1), inet_ntoa(*ipv4));
+		printf("IPv4 Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress1, clientPort, dataBuffer);
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////
 	}
-	// Only for demonstration purpose
-	printf("Press any key to exit: ");
-	_getch();
+	
 
-	// Close client application
+	/* Close client application */
 	iResult = closesocket(clientSocket);
 	if (iResult == SOCKET_ERROR)
 	{
@@ -152,28 +130,8 @@ int main()
 		return 1;
 	}
 
-	// Close Winsock library
+	/* Close Winsock library */
 	WSACleanup();
 
-	// Client has succesfully sent a message
 	return 0;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-bool is_ipV4_address(sockaddr_in6 address)
-{
-	char* check = (char*)&address.sin6_addr.u;
-
-	for (int i = 0; i < 10; i++)
-		if (check[i] != 0)
-			return false;
-
-	if (check[10] != -1 || check[11] != -1)
-		return false;
-
-	return true;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
