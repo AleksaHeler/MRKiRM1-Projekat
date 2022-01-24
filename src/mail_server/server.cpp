@@ -39,7 +39,7 @@ int main()
 	}
 
 	// Initialize serverAddress structure used by bind function
-	memset((char*)&serverAddress, 0, sizeof(serverAddress));
+	memset((char*)&serverAddress, 0, sizeof(serverAddress)); // Initialize memory for address structure
 	serverAddress.sin6_family = AF_INET6; 			// set server address protocol family
 	serverAddress.sin6_addr = in6addr_any;			// use all available addresses of server
 	serverAddress.sin6_port = htons(SERVER_PORT);	// Set server port
@@ -50,7 +50,7 @@ int main()
 		SOCK_DGRAM,   // datagram socket
 		IPPROTO_UDP); // UDP
 
-// Check if socket creation succeeded
+	// Check if socket creation succeeded
 	if (serverSocket == INVALID_SOCKET)
 	{
 		printf("Creating socket failed with error: %d\n", WSAGetLastError());
@@ -61,7 +61,6 @@ int main()
 	// Disable receiving only IPv6 packets. We want to receive both IPv4 and IPv6 packets.
 	char no = 0;
 	int iResult = setsockopt(serverSocket, IPPROTO_IPV6, IPV6_V6ONLY, &no, sizeof(no));
-
 	if (iResult == SOCKET_ERROR)
 		printf("failed with error: %u\n", WSAGetLastError());
 
@@ -130,6 +129,27 @@ int main()
 			printf("IPv6 Client connected from ip: %s, port: %d, sent: %s.\n", ipAddress, clientPort, dataBuffer);
 
 		// Possible server-shutdown logic could be put here
+
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		// Reply to client
+		char return_msg[64] = "received your message";
+		iResult = sendto(serverSocket,
+			return_msg,
+			strlen(return_msg),
+			0,
+			(SOCKADDR*)&clientAddress,
+			sizeof(clientAddress));
+		// Check if message is succesfully sent. If not, close application
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("sendto failed with error: %d\n", WSAGetLastError());
+			closesocket(serverSocket);
+			WSACleanup();
+			return 1;
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////
 	}
 
 	// Close server application
