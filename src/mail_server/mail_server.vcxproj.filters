@@ -96,7 +96,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="net_automat.cpp">
+    <ClCompile Include="NetAutomat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,7 +194,7 @@
     <ClInclude Include="const.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="net_automat.h">
+    <ClInclude Include="NetAutomat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

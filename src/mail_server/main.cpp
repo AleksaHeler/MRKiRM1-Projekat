@@ -2,7 +2,7 @@
 #include "conio.h"
 #include "Kernel/fsmsystem.h"
 #include "Kernel/LogFile.h"
-#include "net_automat.h"
+#include "NetAutomat.h"
 
 // Ovom definicijom modifikujemo program ako treba da se naprave
 // dva programa koji ce biti pokrenuti na istom racunaru
@@ -12,8 +12,8 @@
 // razmenjuje poruke preko jednog postanskog sanduceta
 FSMSystemWithTCP sistemAutomata(1, 1);
 
-// Pravimo instancu klase net_automat
-net_automat automat_1;
+// Pravimo instancu klase NetAutomat
+NetAutomat automat_1;
 
 DWORD WINAPI ThreadFunction(void* dummy) {
 	uint32 buffersCount[3] = { 5, 3, 2 };
