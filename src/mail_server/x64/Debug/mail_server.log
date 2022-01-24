@@ -1,0 +1,3 @@
+﻿  server.cpp
+D:\Documents\GitHub\MRKiRM1-Projekat\src\mail_server\server.cpp(120,25): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  mail_server.vcxproj -> D:\Documents\GitHub\MRKiRM1-Projekat\src\x64\Debug\mail_server.exe

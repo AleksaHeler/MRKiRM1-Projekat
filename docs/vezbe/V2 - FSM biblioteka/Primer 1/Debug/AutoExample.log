@@ -1,0 +1,86 @@
+﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  UdpLogInterface.cpp
+  UdpFSM.cpp
+  TransportInterface.cpp
+  timer.cpp
+  thread.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\ThreadException.h(27,64): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  systemTCP.cpp
+  systemFunctions.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(58,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(12,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(15,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(16,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(59,6): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(11,7): warning C4101: 'dataOffset': unreferenced local variable
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\systemFunctions.cpp(70,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  stdMsgpc16pl16.cpp
+  standardMsg.cpp
+  postOffice.cpp
+  NetFSM.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\NetException.h(27,61): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\NetFSM.cpp(265,19): warning C4244: 'argument': conversion from 'uint16' to 'uint8', possible loss of data
+  msgInterface.cpp
+  messages.cpp
+  mailbox.cpp
+  LogFile.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(71,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(72,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(95,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(101,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(107,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(110,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(131,7): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(142,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(149,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(152,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(163,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(196,21): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(200,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(206,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(218,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(227,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(235,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(256,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(262,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(274,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(283,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(291,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(304,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(310,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(322,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(331,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(339,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(360,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\LogFile.cpp(366,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  logAutomate.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\logAutomate.cpp(135,13): warning C4996: '_vsnprintf': This function or variable may be unsafe. Consider using _vsnprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\logAutomate.cpp(231,33): warning C4244: 'argument': conversion from 'time_t' to 'uint32', possible loss of data
+  linuxFunctions.cpp
+  KernelFunctions.cpp
+  kernelAPI.cpp
+  fsmSystem.cpp
+  Generating Code...
+  Compiling...
+  fsm.cpp
+  errorObject.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\errorObject.cpp(68,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\errorObject.cpp(90,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Distribution.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(15,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(53,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(128,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(220,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(302,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Distribution.cpp(316,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Client.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\NetException.h(27,61): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\kernel\Client.cpp(169,34): warning C4244: '=': conversion from 'uint32' to 'unsigned short', possible loss of data
+  buffersQueue.cpp
+  buffers.cpp
+  main.cpp
+C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 6\main.cpp(55,2): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  AutoExample.cpp
+  Generating Code...
+AutoExample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  AutoExample.vcxproj -> C:\Users\aleksaheler\Desktop\MRKiRM1\Vezbe\vezba 2 - Okruzenje za realizaciju protokola - FSM biblioteka\Primer 1\Debug\AutoExample.exe

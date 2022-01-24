@@ -1,0 +1,27 @@
+Start Timer:  (0)  
+Start Timer:  (0)  
+Start Timer:  (0)  
+Mon Jan 24 20:36:54 2022
+Msg To:       UNKNOWN (0x00),   Automate ID: 0x00000000
+MsgFrom:      UNKNOWN (0x00),   Automate ID: 0x00000000
+Received Msg: (0x0001),         Length: 0  Coding type: 0
+00 00 00 00 | 01 00 00 00 | 00 00 00 00 | 00 00 ff ff | ff ff 00 00 | 00 
+Stop Timer:  (0)  
+State: 0 -> 1
+________________________________________________________________________________________
+Mon Jan 24 20:36:54 2022
+Msg To:       UNKNOWN (0x00),   Automate ID: 0x00000001
+MsgFrom:      UNKNOWN (0x00),   Automate ID: 0x00000000
+Received Msg: (0x0001),         Length: 0  Coding type: 0
+00 00 00 00 | 01 00 00 00 | 00 00 01 00 | 00 00 ff ff | ff ff 00 00 | 00 
+Stop Timer:  (0)  
+State: 0 -> 1
+________________________________________________________________________________________
+Mon Jan 24 20:36:54 2022
+Msg To:       UNKNOWN (0x00),   Automate ID: 0x00000002
+MsgFrom:      UNKNOWN (0x00),   Automate ID: 0x00000000
+Received Msg: (0x0001),         Length: 0  Coding type: 0
+00 00 00 00 | 01 00 00 00 | 00 00 02 00 | 00 00 ff ff | ff ff 00 00 | 00 
+Stop Timer:  (0)  
+State: 0 -> 1
+________________________________________________________________________________________
