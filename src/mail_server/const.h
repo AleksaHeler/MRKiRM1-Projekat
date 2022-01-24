@@ -9,7 +9,7 @@
 #define NUM_AUTOMATA 3
 #define COUNT 1
 #define PARAM_TEXT 2
-#define IP_ADDRES "127.0.0.1"
+#define IP_ADDRES "192.168.1.150"
 
 #define PORT_1 7000
 #define PORT_2 8000

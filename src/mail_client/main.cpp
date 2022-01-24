@@ -6,7 +6,7 @@
 
 // Ovom definicijom modifikujemo program ako treba da se naprave
 // dva programa koji ce biti pokrenuti na istom racunaru
-//#define AUTOMAT1
+#define AUTOMAT2
 
 // Sistem automata sastoji se od jednog tipa automata koji
 // razmenjuje poruke preko jednog postanskog sanduceta
