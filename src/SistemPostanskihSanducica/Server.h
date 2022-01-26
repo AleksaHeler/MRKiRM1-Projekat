@@ -2,6 +2,7 @@
 
 #include <fsm.h>
 #include <fsmsystem.h>
+#include <stdio.h>
 
 #include "stdMsgpc16pl16.h"
 #include "NetFSM.h"

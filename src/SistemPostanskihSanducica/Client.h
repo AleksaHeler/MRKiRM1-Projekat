@@ -2,6 +2,7 @@
 
 #include <fsm.h>
 #include <fsmsystem.h>
+#include <stdio.h>
 
 #include "stdMsgpc16pl16.h"
 #include "NetFSM.h"
@@ -34,27 +35,18 @@ class Client : public FiniteStateMachine {
 		ClientState_ReceiveMail
 	};
 
-	// State: Client_Idle
-	void	Client_Login();					// -> Client_Connecting
+	// State: ClientState_Connecting
+	void	Client_LoginOK();				// -> ClientState_Connected
+	void	Client_LoginError();			// -> ClientState_Idle
 
-	// State: Client_Connecting
-	void	Client_LoginOK();				// -> Client_Connected
-	void	Client_LoginError();			// -> Client_Idle
+	// State: ClientState_Disconnecting
+	void	Client_Disconnect();			// -> ClientState_Idle
 
-	// State: Client_Connected
-	void	Client_Logout();				// -> Client_Disconnecting
-	void	Client_SendMail();				// -> Client_Connected
-	void	Client_CheckMail();				// -> Client_CheckMail
-	void	Client_ReceiveMail();			// -> Client_ReceiveMail
+	// State: ClientState_CheckMail
+	void	Client_CheckMailResponse();		// -> ClientState_Connected
 
-	// State: Client_Disconnecting
-	void	Client_Disconnect();			// -> Client_Idle
-
-	// State: Client_CheckMail
-	void	Client_CheckMailResponse();		// -> Client_Connected
-
-	// State: Client_ReceiveMail
-	void	Client_ReceiveMailResponse();	// -> Client_Connected
+	// State: ClientState_ReceiveMail
+	void	Client_ReceiveMailResponse();	// -> ClientState_Connected
 
 
 public:
@@ -63,6 +55,13 @@ public:
 
 	void Initialize();
 	void SendData(uint8 dst, uint8 len, const char* data);
+
+	// Public functions for client
+	void Login();			// -> ClientState_Connecting
+	void Logout();			// -> ClientState_Disconnecting
+	void SendMail();		// -> ClientState_Connected
+	void CheckMail();		// -> ClientState_CheckMail
+	void ReceiveMail();		// -> ClientState_ReceiveMail
 
 protected:
 	static DWORD WINAPI TCPListener(LPVOID);
