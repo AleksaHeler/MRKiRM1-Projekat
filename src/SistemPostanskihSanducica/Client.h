@@ -3,7 +3,7 @@
 #include <fsm.h>
 #include <fsmsystem.h>
 
-#include "../kernel/stdMsgpc16pl16.h"
+#include "stdMsgpc16pl16.h"
 #include "NetFSM.h"
 #include "Const.h"
 
@@ -26,12 +26,12 @@ class Client : public FiniteStateMachine {
 
 	// Client states
 	enum	States {
-		Client_Idle,
-		Client_Connecting,
-		Client_Connected,
-		Client_Disconnecting,
-		Client_CheckMail,
-		Client_ReceiveMail
+		ClientState_Idle,
+		ClientState_Connecting,
+		ClientState_Connected,
+		ClientState_Disconnecting,
+		ClientState_CheckMail,
+		ClientState_ReceiveMail
 	};
 
 	// State: Client_Idle

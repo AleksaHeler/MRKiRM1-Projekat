@@ -3,7 +3,7 @@
 #include <fsm.h>
 #include <fsmsystem.h>
 
-#include "../kernel/stdMsgpc16pl16.h"
+#include "stdMsgpc16pl16.h"
 #include "NetFSM.h"
 #include "Const.h"
 
@@ -26,8 +26,8 @@ class Server : public FiniteStateMachine {
 
 	// Server states
 	enum	States {
-		Server_Idle,
-		Server_Connected
+		ServerState_Idle,
+		ServerState_Connected
 	};
 
 	// State: Server_Idle
@@ -57,4 +57,4 @@ protected:
 
 	void InitSocket();
 	void TcpToFsm(u_short port);
-}
+};
