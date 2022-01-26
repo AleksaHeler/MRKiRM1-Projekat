@@ -96,9 +96,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetAutomat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kernel\buffers.h">
@@ -189,12 +186,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="kernel\uniSock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetAutomat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="const.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

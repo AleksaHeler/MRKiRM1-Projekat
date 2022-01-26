@@ -126,6 +126,8 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChAuto.cpp" />
+    <ClCompile Include="ClAuto.cpp" />
     <ClCompile Include="kernel\buffers.cpp" />
     <ClCompile Include="kernel\buffersQueue.cpp" />
     <ClCompile Include="kernel\Client.cpp" />
@@ -153,9 +155,11 @@
     <ClCompile Include="kernel\UdpFSM.cpp" />
     <ClCompile Include="kernel\UdpLogInterface.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NetAutomat.cpp" />
+    <ClCompile Include="UserAuto.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChAuto.h" />
+    <ClInclude Include="ClAuto.h" />
     <ClInclude Include="const.h" />
     <ClInclude Include="kernel\buffers.h" />
     <ClInclude Include="kernel\buffersQueue.h" />
@@ -187,7 +191,7 @@
     <ClInclude Include="kernel\UdpFSM.h" />
     <ClInclude Include="kernel\UdpLogInterface.h" />
     <ClInclude Include="kernel\uniSock.h" />
-    <ClInclude Include="NetAutomat.h" />
+    <ClInclude Include="UserAuto.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="kernel\KernelLib.lib" />

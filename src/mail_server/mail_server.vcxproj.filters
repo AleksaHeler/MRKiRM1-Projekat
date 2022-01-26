@@ -93,10 +93,16 @@
     <ClCompile Include="kernel\UdpLogInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChAuto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClAuto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetAutomat.cpp">
+    <ClCompile Include="UserAuto.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,10 +197,16 @@
     <ClInclude Include="kernel\uniSock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ChAuto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClAuto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="const.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NetAutomat.h">
+    <ClInclude Include="UserAuto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,100 +1,89 @@
-#include "stdio.h"
-#include "conio.h"
-#include "Kernel/fsmsystem.h"
-#include "Kernel/LogFile.h"
-#include "NetAutomat.h"
 
-// Ovom definicijom modifikujemo program ako treba da se naprave
-// dva programa koji ce biti pokrenuti na istom racunaru
-#define AUTOMAT1
+#include <stdio.h>
+#include <conio.h>
 
-// Sistem automata sastoji se od jednog tipa automata koji
-// razmenjuje poruke preko jednog postanskog sanduceta
-FSMSystemWithTCP sistemAutomata(1, 1);
+#include "const.h"
+#include "fsmsystem.h"
+#include "logfile.h"
+#include "ChAuto.h"
+#include "ClAuto.h"
+#include "UserAuto.h"
 
-// Pravimo instancu klase NetAutomat
-NetAutomat automat_1;
 
-DWORD WINAPI ThreadFunction(void* dummy) {
-	uint32 buffersCount[3] = { 5, 3, 2 };
-	uint32 buffersLength[3] = { 128, 256, 512 };
-	uint8 buffClassNo = 3;
+#define D_MAX_NUMBER_OF_AUTOMATES       10
 
-	// Inicijalizacija sistema automata
-	printf("Inicijalizujem FSMSystemWithTCP \n");
-	sistemAutomata.Add(&automat_1, FSM_TYPE_AUTOMAT, 1, true);
-	sistemAutomata.InitKernel(buffClassNo, buffersCount, buffersLength, 1);
-	LogFile lf("log.log", "log.ini");
+#define D_VALID_NUMBER_OF_ARGUMENTS     2
+
+#define D_ERROR                         -1
+#define D_OK                            0
+
+
+extern bool g_ProgramEnd;
+
+#define AUTOMAT_COUNT 3
+#define MSGBOX_COUNT 3
+
+
+/* FSM system instance. */
+static FSMSystem sys(AUTOMAT_COUNT, MSGBOX_COUNT);
+
+DWORD WINAPI SystemThread(void* data) {
+	ChannelAuto Channel;
+	ClientAuto Client;
+	UserAuto User;
+
+	/* Kernel buffer description block */
+	/* number of buffer types */
+	const uint8 buffClassNo = 4;
+	/* number of buffers of each buffer type */
+	uint32 buffsCount[buffClassNo] = { 50, 50, 5000, 10 };
+	/* buffer size for each buffer type */
+	uint32 buffsLength[buffClassNo] = { 128, 256, 512, 1024 };
+
+	/* Logging setting - to a file in this case */
+	LogFile lf("log.log" /*log file name*/, "./log.ini" /* message translator file */);
 	LogAutomateNew::SetLogInterface(&lf);
 
-	// Kako je svejedno ko ce pokrenuti slanje poruka u oba automata
-	// je uveden server stim sto je za program 1 server na portu PORT_1
-	// a za drugi program na portu PORT_2. Sve je jedno koji ce automat prvi
-	// pokrenuti TCP komunikaciju sa porukom establishConection().
-#ifdef AUTOMAT1
-	printf("Startujemo server...na portu:%u\n", PORT_1);
-	sistemAutomata.InitTCPServer(PORT_1, FSM_TYPE_AUTOMAT);
-#else
-	printf("Startujemo server...na portu:%u\n", PORT_2);
-	sistemAutomata.InitTCPServer(PORT_2, FSM_TYPE_AUTOMAT);
-#endif
-	// Pokrecemo sistem automata
-	printf("Startujem FSMSystem\n");
-	try {
-		sistemAutomata.Start();
-	}
-	catch (...) {
-		printf("Exception - prekid rada sistema automata\n");
-		return 0;
-	}
-	printf("Kraj rada sistema automata\n");
+	/* Mandatory kernel initialization */
+	printf("[*] Initializing system...\n");
+	sys.InitKernel(buffClassNo, buffsCount, buffsLength, 3, Timer1s);
+
+	/* Add automates to the system */
+	sys.Add(&Channel, CH_AUTOMATE_TYPE_ID, 1, true);
+	sys.Add(&Client, CL_AUTOMATE_TYPE_ID, 1, true);
+	sys.Add(&User, USER_AUTOMATE_TYPE_ID, 1, true);
+
+	/* Start the first automate - usually it sends the first message,
+	since only automates can send messages */
+	User.Start();
+
+	/* Starts the system - dispatches system messages */
+	printf("[*] Starting system...\n");
+	sys.Start();
+
+	/* Finish thread */
 	return 0;
 }
 
-void main(int argc, char* argv[]) {
-	DWORD threadID;
-	bool end = false;
-	char ret;
+int main(int argc, char* argv[]) {
 
-	// Pokrecemo obradu poruka sistema automata u posebnoj programskoj niti
-	HANDLE hTemp = CreateThread(NULL, 0, ThreadFunction, NULL, 0, &threadID);
-	Sleep(100);
+	DWORD thread_id;
+	HANDLE thread_handle;
 
-	// Program radi dok se sa tastature ne unese karakter Q ili q
-	while (!end) {
-		if (_kbhit()) {
-			ret = _getch();
-			switch (ret) {
-			case 'Q':
-			case 'q':
-				sistemAutomata.StopSystem();
-				end = true;
-				Sleep(100);
-				break;
-			case 'S':
-			case 's':
-				automat_1.StartDemo();
-				break;
-			case 'E':
-			case 'e':
-				// Pritiskom na e u bilo kom automatu pokrece se uspostavljanje veze
-				// sa serverom drugog automata kako bi se uspostavlila veza za razmenu podataka
-#ifdef AUTOMAT1
-				automat_1.setPort(PORT_2);
-				automat_1.setIP(IP_ADDRES);
-				printf("establishConection...na portu:%u", PORT_2);
-				automat_1.establishConnection();
-#else
-				automat_1.setPort(PORT_1);
-				automat_1.setIP(IP_ADDRES);
-				printf("establishConection...na portu:%u", PORT_1);
-				automat_1.establishConnection();
-#endif
-			default:
-				break;
-			}
-		}
-	}
-	CloseHandle(hTemp);
-	printf("Kraj rada \n");
+	/* Start operating thread. */
+	thread_handle = CreateThread(NULL, 0, SystemThread, NULL, 0, &thread_id);
+
+	/* Wait for end. */
+	while (!g_ProgramEnd) {}
+	getch();
+
+
+	/* Notify the system to stop - this causes the thread to finish */
+	printf("[*] Stopping system...\n");
+	sys.StopSystem();
+
+	/* Free the thread handle */
+	CloseHandle(thread_handle);
+
+	return 0;
 }
