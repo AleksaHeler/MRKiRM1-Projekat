@@ -84,6 +84,76 @@ void Client::Initialize() {
 /// NETWORK //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-// TODO: TCPListener(LPVOID)
-// TODO: InitSocket()
-// TODO: TcpToFsm(u_short port)
+DWORD Client::TCPListener(LPVOID param) {
+	Client* pParent = (Client*)param;
+	int nReceivedBytes;
+
+	int slen = sizeof(pParent->serverAddress);
+
+	printf("Node %d UDP listening on port %d\n", pParent->GetObject(), ntohs(pParent->socketAddress.sin_port));
+
+	while(1) {
+		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
+		if (nReceivedBytes == 0)
+		{
+			printf("Recv 0 bytes!\n");
+			break;
+		}
+		if (nReceivedBytes < 0)
+		{
+			DWORD err = WSAGetLastError();
+			printf("Client recieve error: %d\n", err);
+			continue;
+		}
+		pParent->TcpToFsm();
+		Sleep(500);
+	};
+
+	return 1;
+}
+
+void Client::InitSocket() {
+	// Create the socket
+	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP);
+	if (mSocket == INVALID_SOCKET)
+	{
+		printf("Client: socket() failed! Error : %ld\n", WSAGetLastError());
+		return;
+	}
+
+	// Set server socket address
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = htons(SERVER_PORT);
+	serverAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+
+	// Bind to port (client port number will be server port num + 1 + clients ID) (IDs start from 0) 
+	socketAddress.sin_family = AF_INET;
+	socketAddress.sin_port = htons(SERVER_PORT + GetObject() + 1);
+	socketAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+
+	if (bind(mSocket, (SOCKADDR*)&socketAddress, sizeof(socketAddress)) == SOCKET_ERROR)
+	{
+		printf("Client: bind() failed! Error : %ld\n", WSAGetLastError());
+		closesocket(mSocket);
+		return;
+	}
+
+	// Then, start the thread that will listen on the the newly created socket
+	mhThread = CreateThread(NULL, 0, TCPListener, (LPVOID)this, 0, &mnThreadID);
+	if (mhThread == NULL)
+	{
+		// Cannot create thread
+		closesocket(mSocket);
+		mSocket = INVALID_SOCKET;
+		return;
+	}
+}
+
+void Client::TcpToFsm() {
+	printf("[TcpToFsm] Buffer: %s\n", buffer);
+	//PrepareNewMessage(0x00, ClientMSG_Login);
+	//SetMsgToAutomate(CLIENT_TYPE_ID);
+	//SetMsgObjectNumberTo(GetObject());
+
+	//SendMessage(CLIENT_MBX_ID);
+}

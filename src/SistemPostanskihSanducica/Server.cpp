@@ -126,7 +126,7 @@ DWORD Server::TCPListener(LPVOID param) {
 
 void Server::InitSocket() {
 	// Create the socket
-	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP); // SOCK_DGRAM, IPPROTO_UDP
+	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP);
 
 	if (mSocket == INVALID_SOCKET)
 	{
@@ -159,7 +159,7 @@ void Server::InitSocket() {
 
 void Server::TcpToFsm() {
 	printf("[TcpToFsm] Buffer: %s\n", buffer);
-	//PrepareNewMessage(0x00, MSG_Frame);
+	//PrepareNewMessage(0x00, ClientMSG_Login);
 	//SetMsgToAutomate(SERVER_TYPE_ID);
 	//SetMsgObjectNumberTo(0);
 	//AddParam(PARAM_USERNAME, buffer);
