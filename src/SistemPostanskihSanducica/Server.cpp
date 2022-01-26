@@ -94,7 +94,74 @@ void Server::Server_ReceiveMail() {
 //////////////////////////////////////////////////////////////////////////////////////
 /// NETWORK //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
- 
-// TODO: TCPListener(LPVOID)
-// TODO: InitSocket()
-// TODO: TcpToFsm(u_short port)
+
+DWORD Server::TCPListener(LPVOID param) {
+	Server* pParent = (Server*)param;
+	int nReceivedBytes;
+
+	printf("Server TCP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
+
+	SOCKADDR_IN recvAddress;
+	int recvAddressLen = sizeof(recvAddress);
+
+	while (1) {
+		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&recvAddress, &recvAddressLen);
+		if (nReceivedBytes == 0)
+		{
+			printf("Recieved 0 bytes!\n");
+			break;
+		}
+		if (nReceivedBytes < 0)
+		{
+			DWORD err = WSAGetLastError();
+			printf("Server recieve error: %d\n", err);
+			continue;
+		}
+		pParent->TcpToFsm();
+		Sleep(500);
+	}
+
+	return 1;
+}
+
+void Server::InitSocket() {
+	// Create the socket
+	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP); // SOCK_DGRAM, IPPROTO_UDP
+
+	if (mSocket == INVALID_SOCKET)
+	{
+		printf("Server: socket() failed! Error : %ld\n", WSAGetLastError());
+		return;
+	}
+
+	// Bind to port
+	socketAddress.sin_family = AF_INET;
+	socketAddress.sin_port = htons(SERVER_PORT);
+	socketAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+
+	if (bind(mSocket, (SOCKADDR*)&socketAddress, sizeof(socketAddress)) == SOCKET_ERROR)
+	{
+		printf("Server: bind() failed! Error : %ld\n", WSAGetLastError());
+		closesocket(mSocket);
+		return;
+	}
+
+	// Then, start the thread that will listen on the the newly created socket
+	mhThread = CreateThread(NULL, 0, TCPListener, (LPVOID)this, 0, &mnThreadID);
+	if (mhThread == NULL)
+	{
+		// Cannot create thread
+		closesocket(mSocket);
+		mSocket = INVALID_SOCKET;
+		return;
+	}
+}
+
+void Server::TcpToFsm() {
+	printf("[TcpToFsm] Buffer: %s\n", buffer);
+	//PrepareNewMessage(0x00, MSG_Frame);
+	//SetMsgToAutomate(SERVER_TYPE_ID);
+	//SetMsgObjectNumberTo(0);
+	//AddParam(PARAM_USERNAME, buffer);
+	//SendMessage(SERVER_MBX_ID);
+}

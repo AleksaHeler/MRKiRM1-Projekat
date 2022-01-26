@@ -29,8 +29,9 @@ const uint16 ClientMSG_ReceiveMail		= 0x0105;
 
 
 // Network constants
-#define ADDRESS "127.0.0.1"
-#define PORT 5000
+#define SERVER_ADDRESS "127.0.0.1"
+#define SERVER_PORT 5000
+#define BUFFER_SIZE 1024
 
 // Message parameter defines
 #define PARAM_USERNAME 0x01				// Login data

@@ -50,12 +50,14 @@ public:
 protected:
 	static DWORD WINAPI TCPListener(LPVOID);
 
-	SOCKET m_Socket;
+	SOCKET mSocket;
 	SOCKADDR_IN socketAddress;
-	HANDLE m_hThread;
-	DWORD m_nThreadID;
-	uint16 m_nMaxMsgSize;
+	HANDLE mhThread;
+	DWORD mnThreadID;
+	uint16 mnMaxMsgSize;
+	char buffer[BUFFER_SIZE];
 
 	void InitSocket();
-	void TcpToFsm(u_short port);
+	void TcpToFsm();
 };
+
