@@ -23,7 +23,7 @@ class Server : public FiniteStateMachine {
 	uint8	GetMbxId();
 	uint8	GetAutomate();
 	uint32	GetObject();
-	void	ResetData();
+	//void	ResetData();
 
 	// Server states
 	enum	States {

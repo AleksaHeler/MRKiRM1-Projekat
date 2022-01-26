@@ -23,7 +23,7 @@ class Client : public FiniteStateMachine {
 	uint8	GetMbxId();
 	uint8	GetAutomate();
 	uint32	GetObject();
-	void	ResetData();
+	//void	ResetData();
 
 	// Client states
 	enum	States {

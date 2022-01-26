@@ -86,9 +86,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>kernel</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,13 +141,73 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="kernel\buffers.cpp" />
+    <ClCompile Include="kernel\buffersQueue.cpp" />
+    <ClCompile Include="kernel\Client-new.cpp" />
+    <ClCompile Include="kernel\Client.cpp" />
+    <ClCompile Include="kernel\Distribution.cpp" />
+    <ClCompile Include="kernel\errorObject.cpp" />
+    <ClCompile Include="kernel\fsm.cpp" />
+    <ClCompile Include="kernel\fsmSystem.cpp" />
+    <ClCompile Include="kernel\kernelAPI.cpp" />
+    <ClCompile Include="kernel\KernelFunctions.cpp" />
+    <ClCompile Include="kernel\linuxFunctions.cpp" />
+    <ClCompile Include="kernel\logAutomate.cpp" />
+    <ClCompile Include="kernel\LogFile.cpp" />
+    <ClCompile Include="kernel\mailbox.cpp" />
+    <ClCompile Include="kernel\messages.cpp" />
+    <ClCompile Include="kernel\msgInterface.cpp" />
+    <ClCompile Include="kernel\NetFSM.cpp" />
+    <ClCompile Include="kernel\postOffice.cpp" />
+    <ClCompile Include="kernel\standardMsg.cpp" />
+    <ClCompile Include="kernel\stdMsgpc16pl16.cpp" />
+    <ClCompile Include="kernel\systemFunctions.cpp" />
+    <ClCompile Include="kernel\systemTCP.cpp" />
+    <ClCompile Include="kernel\thread.cpp" />
+    <ClCompile Include="kernel\timer.cpp" />
+    <ClCompile Include="kernel\TransportInterface.cpp" />
+    <ClCompile Include="kernel\UdpFSM.cpp" />
+    <ClCompile Include="kernel\UdpLogInterface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="Const.h" />
+    <ClInclude Include="kernel\buffers.h" />
+    <ClInclude Include="kernel\buffersQueue.h" />
+    <ClInclude Include="kernel\Client.h" />
+    <ClInclude Include="kernel\Distribution.h" />
+    <ClInclude Include="kernel\errorObject.h" />
+    <ClInclude Include="kernel\fsm.h" />
+    <ClInclude Include="kernel\fsmSystem.h" />
+    <ClInclude Include="kernel\kernelAPI.h" />
+    <ClInclude Include="kernel\kernelConsts.h" />
+    <ClInclude Include="kernel\kernelTypes.h" />
+    <ClInclude Include="kernel\linuxThread.h" />
+    <ClInclude Include="kernel\logAutomate.h" />
+    <ClInclude Include="kernel\LogFile.h" />
+    <ClInclude Include="kernel\mailbox.h" />
+    <ClInclude Include="kernel\messages.h" />
+    <ClInclude Include="kernel\msgInterface.h" />
+    <ClInclude Include="kernel\NetException.h" />
+    <ClInclude Include="kernel\NetFSM.h" />
+    <ClInclude Include="kernel\postOffice.h" />
+    <ClInclude Include="kernel\standardMsg.h" />
+    <ClInclude Include="kernel\stdMsgpc16pl16.h" />
+    <ClInclude Include="kernel\systemFunctions.h" />
+    <ClInclude Include="kernel\systemTCP.h" />
+    <ClInclude Include="kernel\thread.h" />
+    <ClInclude Include="kernel\ThreadException.h" />
+    <ClInclude Include="kernel\timer.h" />
+    <ClInclude Include="kernel\TransportInterface.h" />
+    <ClInclude Include="kernel\UdpFSM.h" />
+    <ClInclude Include="kernel\UdpLogInterface.h" />
+    <ClInclude Include="kernel\uniSock.h" />
     <ClInclude Include="Server.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="kernel\KernelLib.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
