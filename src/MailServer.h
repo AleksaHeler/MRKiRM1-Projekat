@@ -27,6 +27,15 @@ class Server : public FiniteStateMachine {
 		ServerState_Connected
 	};
 
+	// Allowed users and their passwords
+	int numberOfUsernames = 1;
+	char usernames[1][MAX_STRING_SIZE] = {
+		"aleksa"
+	};
+	char passwords[1][MAX_STRING_SIZE] = {
+		"123456"
+	};
+
 	// State: Server_Idle
 	void	Server_Login();				// -> Server_Connected
 
@@ -50,10 +59,12 @@ protected:
 	SOCKADDR_IN socketAddress;
 	HANDLE mhThread;
 	DWORD mnThreadID;
-	//uint16 mnMaxMsgSize;
 	char buffer[BUFFER_SIZE];
+	char username[MAX_STRING_SIZE];
+	char password[MAX_STRING_SIZE];
 
 	void InitSocket();
+	void SendBufferToClient();
 	void UdpToFsm();
 };
 

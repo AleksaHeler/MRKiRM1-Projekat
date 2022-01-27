@@ -50,14 +50,13 @@ public:
 	~Client();
 
 	void Initialize();
-	void SendData(const char* data);
 
 	// Public functions for client
-	void Login();			// -> ClientState_Connecting
-	void Logout();			// -> ClientState_Disconnecting
-	void SendMail();		// -> ClientState_Connected
-	void CheckMail();		// -> ClientState_CheckMail
-	void ReceiveMail();		// -> ClientState_ReceiveMail
+	void Login(const char* username, const char* password);			// -> ClientState_Connecting
+	void Logout();													// -> ClientState_Disconnecting
+	void SendMail();												// -> ClientState_Connected
+	void CheckMail();												// -> ClientState_CheckMail
+	void ReceiveMail();												// -> ClientState_ReceiveMail
 
 protected:
 	static DWORD WINAPI TCPListener(LPVOID);
@@ -67,11 +66,10 @@ protected:
 	SOCKADDR_IN serverAddress;
 	HANDLE mhThread;
 	DWORD mnThreadID;
-	//uint16 mnMaxMsgSize;
-	//char sendBuffer[BUFFER_SIZE];
 	char buffer[BUFFER_SIZE];
 
 	void InitSocket();
+	void SendBufferToServer();
 	void UdpToFsm();
 };
 

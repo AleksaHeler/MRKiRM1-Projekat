@@ -40,7 +40,7 @@ void Client::Reset() {
 void Client::Initialize() {
 	SetState(ClientState_Idle);
 	InitSocket();
-	
+
 	// Set state transition functions and triggers (messages)
 	InitEventProc(ClientState_Connecting, ServerMSG_LoginOk, (PROC_FUN_PTR)&Client::Client_LoginOK);
 	InitEventProc(ClientState_Connecting, ServerMSG_LoginError, (PROC_FUN_PTR)&Client::Client_LoginError);
@@ -56,16 +56,19 @@ void Client::Initialize() {
 
 // ClientState_Connecting -> ClientState_Connected
 void Client::Client_LoginOK() {
+	printf(CLIENT_DEBUG_NAME"Successful login\n");
 	SetState(ClientState_Connected);
 }
 
 // ClientState_Connecting -> ClientState_Idle
 void Client::Client_LoginError() {
+	printf(CLIENT_DEBUG_NAME"Login error!\n");
 	SetState(ClientState_Idle);
 }
 
 // ClientState_Disconnecting -> ClientState_Idle
 void Client::Client_Disconnect() {
+	printf(CLIENT_DEBUG_NAME"Successful disconnect\n");
 	SetState(ClientState_Idle);
 }
 
@@ -84,24 +87,56 @@ void Client::Client_ReceiveMailResponse() {
 /// PUBLIC FUNCTIONS /////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-//void SendData(const char* data);
 // void Login();			// ClientState_Idle			->	ClientState_Connecting
-// void Logout();			// ClientState_Connected	->	ClientState_Disconnecting
-// void SendMail();			// ClientState_Connected	->	ClientState_Connected
-// void CheckMail();		// ClientState_Connected	->	ClientState_CheckMail
-// void ReceiveMail();		// ClientState_Connected	->	ClientState_ReceiveMail
+// Send login message with username and password to server via net, change state to connecting to await response
+void Client::Login(const char* username, const char* password) {
+	if (GetState() != ClientState_Idle) {
+		printf(CLIENT_DEBUG_NAME"Error: tried to login while not in idle state!");
+		return;
+	}
+	strcpy(buffer, "\0");
+	strcat(buffer, LOGIN_COMMAND);
+	strcat(buffer, " ");
+	strcat(buffer, username);
+	strcat(buffer, " ");
+	strcat(buffer, password);
 
-
-void Client::SendData(const char* data) {
-	strcpy(buffer, data);
-	//send(mSocket, sendBuffer, BUFFER_SIZE, 0);
-	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
-	printf("Sent '%s' to server\n", buffer);
+	SendBufferToServer();
+	SetState(ClientState_Connecting);
 }
+
+// void Logout();			// ClientState_Connected	->	ClientState_Disconnecting
+// TODO: if connected, send disconnect message and change state to await response
+void Client::Logout() {
+	if(GetState() != ClientState_Connected){
+		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		return;
+	}
+
+	if (DEBUG) printf(CLIENT_DEBUG_NAME"Logging out...\n");
+	strcpy(buffer, LOGOUT_COMMAND);
+	SendBufferToServer();
+	SetState(ClientState_Disconnecting);
+}
+
+// void SendMail();			// ClientState_Connected	->	ClientState_Connected
+void Client::SendMail() {}
+
+// void CheckMail();		// ClientState_Connected	->	ClientState_CheckMail
+void Client::CheckMail() {}
+
+// void ReceiveMail();		// ClientState_Connected	->	ClientState_ReceiveMail
+void Client::ReceiveMail() {}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// NETWORK //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
+
+void Client::SendBufferToServer() {
+	if (DEBUG) printf(CLIENT_DEBUG_NAME"Sending (%d) '%s' to server...\n", (uint8)buffer[0], buffer);
+	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+}
 
 DWORD Client::TCPListener(LPVOID param) {
 	Client* pParent = (Client*)param;
@@ -109,19 +144,21 @@ DWORD Client::TCPListener(LPVOID param) {
 
 	int slen = sizeof(pParent->serverAddress);
 
-	printf("Client UDP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
+	printf(CLIENT_DEBUG_NAME"Client UDP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
 
-	while(1) {
+	while (1) {
+		memset(pParent->buffer, 0, BUFFER_SIZE);
 		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
+		pParent->buffer[nReceivedBytes] = '\0';
 		if (nReceivedBytes == 0)
 		{
-			printf("Recv 0 bytes!\n");
+			printf(CLIENT_DEBUG_NAME"Recv 0 bytes!\n");
 			break;
 		}
 		if (nReceivedBytes < 0)
 		{
 			DWORD err = WSAGetLastError();
-			printf("Client recieve error: %d\n", err);
+			printf(CLIENT_DEBUG_NAME"recieve error: %d\n", err);
 			continue;
 		}
 		pParent->UdpToFsm();
@@ -136,7 +173,7 @@ void Client::InitSocket() {
 	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (mSocket == INVALID_SOCKET)
 	{
-		printf("Client: socket() failed! Error : %ld\n", WSAGetLastError());
+		printf(CLIENT_DEBUG_NAME"socket() failed! Error : %ld\n", WSAGetLastError());
 		return;
 	}
 
@@ -152,7 +189,7 @@ void Client::InitSocket() {
 
 	if (bind(mSocket, (SOCKADDR*)&socketAddress, sizeof(socketAddress)) == SOCKET_ERROR)
 	{
-		printf("Client: bind() failed! Error : %ld\n", WSAGetLastError());
+		printf(CLIENT_DEBUG_NAME"bind() failed! Error : %ld\n", WSAGetLastError());
 		closesocket(mSocket);
 		return;
 	}
@@ -169,7 +206,37 @@ void Client::InitSocket() {
 }
 
 void Client::UdpToFsm() {
-	printf("[UdpToFsm] Buffer: %s\n", buffer);
+	//if (DEBUG) printf(CLIENT_DEBUG_NAME"Received (%d) '%s' from server...\n", (uint8)buffer[0], buffer);
+
+	// TODO: logic on receiving (send correct message with parameters to client automate)
+	switch (buffer[0]) {
+	case ServerMSG_LoginOk:
+		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginOk' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_LoginOk);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	case ServerMSG_LoginError:
+		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginError' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_LoginError);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	case ServerMSG_LogoutOk:
+		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LogoutOk' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_LogoutOk);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	default:
+		break;
+	}
+
+	// If message is login_ok or login_error, send it to client automate
+
 	//PrepareNewMessage(0x00, ClientMSG_Login);
 	//SetMsgToAutomate(CLIENT_TYPE_ID);
 	//SetMsgObjectNumberTo(GetObject());

@@ -13,15 +13,18 @@
 #include "NetFSM.h"
 
 
+const bool DEBUG = true;
+#define SERVER_DEBUG_NAME "[Server] "
+#define CLIENT_DEBUG_NAME "\t\t\t\t\t\t[CLIENT] "
+
+
 // FSM IDs
-const uint8 SERVER_TYPE_ID = 0x01;
-const uint8 CLIENT_TYPE_ID = 0x02;
+const uint8 SERVER_TYPE_ID = 0x00;
+const uint8 CLIENT_TYPE_ID = 0x01;
 
 // FSM message box IDs
-const uint8 SERVER_MBX_ID = 0x01;
-const uint8 CLIENT_MBX_ID = 0x02;
-
-#define CLIENT_COUNT 2
+const uint8 SERVER_MBX_ID = 0x00;
+const uint8 CLIENT_MBX_ID = 0x01;
 
 // Server messages:
 const uint16 ServerMSG_LoginOk				= 0x0001;
@@ -43,6 +46,7 @@ const uint16 ClientMSG_ReceiveMail		= 0x0105;
 #define SERVER_ADDRESS "127.0.0.1"
 #define SERVER_PORT 5000
 #define BUFFER_SIZE 1024
+#define MAX_STRING_SIZE 64
 
 // Message parameter defines
 #define PARAM_USERNAME 0x01				// Login data
@@ -50,6 +54,10 @@ const uint16 ClientMSG_ReceiveMail		= 0x0105;
 #define PARAM_MAIL_COUNT 0x04			// For checking inbox, how many mails unread
 #define PARAM_MESSAGE_SUBJECT 0x11		// For receiving/sending mail, title and content
 #define PARAM_MESSAGE_TEXT 0x12
+
+// Commands sent as string over internet
+#define LOGIN_COMMAND "login"
+#define LOGOUT_COMMAND "logout"
 
 
 #endif // CONST_H

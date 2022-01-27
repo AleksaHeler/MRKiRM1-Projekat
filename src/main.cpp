@@ -5,9 +5,9 @@
 // TODO: call Client.SendData("Hello world!");
 
 // FSM system instance
-static FSMSystem sys(CLIENT_COUNT + 1 /* max number of automates types */, 2 /* max number of msg boxes */);
+static FSMSystem sys(2 /* max number of automates types */, 2 /* max number of msg boxes */);
 Server server;
-Client clients[CLIENT_COUNT];
+Client client;
 
 
 DWORD WINAPI SystemThread(void* data) {
@@ -28,12 +28,8 @@ DWORD WINAPI SystemThread(void* data) {
 	// Add Server automate to the system 
 	sys.Add(&server, SERVER_TYPE_ID, 1, false);
 
-	// Add Clients automates to the system 
-	sys.Add(&clients[0], CLIENT_TYPE_ID, CLIENT_COUNT, true);
-	for (int i = 1; i < CLIENT_COUNT; i++)
-	{
-		sys.Add(&clients[i], CLIENT_TYPE_ID);
-	}
+	// Add Client automate to the system
+	sys.Add(&client, CLIENT_TYPE_ID, 1, false);
 
 	// Starts the system - dispatches system messages
 	printf("[*] Starting system...\n");
@@ -57,13 +53,27 @@ int main(int argc, char** argv) {
 
 	// Start main thread
 	thread_handle = CreateThread(NULL, 0, SystemThread, NULL, 0, &thread_id);
+	Sleep(200);
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	/// USER INPUT //////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////
-	printf("Press any key to send data...\n");
+	printf("Press any key to continue...\n");
 	_getch();
-	clients[0].SendData("Hello world!");
+	printf("\n\t\t\t========== Logging in ==========\n");
+	client.Login("aleksa", "123456");
+	Sleep(2000);
+	printf("\n\t\t\t========== Logging out ==========\n");
+	client.Logout();
+	Sleep(4000);
+
+	printf("\n\t\t\t========== Logging in error ==========\n");
+	client.Login("aleksa", "wrongpassword");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Logging in error ==========\n");
+	client.Login("petar", "123456");
+	Sleep(2000);
 
 	// Wait for input to end
 	_getch();
@@ -71,11 +81,12 @@ int main(int argc, char** argv) {
 	// Notify the system to stop - this causes the thread to finish
 	printf("[*] Stopping system...\n");
 	sys.StopSystem();
-	Sleep(2000);
-	WSACleanup();
+	Sleep(5000);
 
 	// Free the thread handle
 	CloseHandle(thread_handle);
+
+	WSACleanup();
 
 	return 0;
 }
