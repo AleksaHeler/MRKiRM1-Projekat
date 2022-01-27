@@ -57,11 +57,9 @@ void Server::Initialize() {
 
 // ServerState_Idle -> ServerState_Connected
 void Server::Server_Login() {
-	// TODO: Check parameters for user info. If all ok send Ok
-	//       response, else Error response and stay in idle
 	printf(SERVER_DEBUG_NAME"Logging in { %s, %s }...\n", username, password);
 
-	// TODO: login check credentials...
+	// Check credentials...
 	bool loginOk = false;
 	for (int i = 0; i < numberOfUsernames; i++) {
 		if (strcmp(usernames[i], username) == 0) {
@@ -88,7 +86,7 @@ void Server::Server_Login() {
 
 // ServerState_Connected -> ServerState_Idle
 void Server::Server_Logout() {
-	// TODO: Just transition to idle state and reset things
+	// Just transition to idle state and send ok response to client
 	printf(SERVER_DEBUG_NAME"Logging out...\n");
 	buffer[0] = ServerMSG_LogoutOk;
 	buffer[1] = '\0';
@@ -98,26 +96,101 @@ void Server::Server_Logout() {
 
 // ServerState_Connected -> ServerState_Connected
 void Server::Server_SendMail() {
-	// TODO: Check parameters - it contains all the info of message to be sent.
-	//       Store message where its headed
-	printf(SERVER_DEBUG_NAME"TODO: Server_SendMail\n");
+	// Store message where its headed
+	printf(SERVER_DEBUG_NAME"Client send mail:\n\tto: %s\n\tsubject: %s\n\ttext: %s", username, messageSubject, messageText);
+
+	// Find user that will receive mail
+	bool userFound = false;
+	int userIndex = 0;
+	for (; userIndex < numberOfUsernames; userIndex++) {
+		if (strcmp(usernames[userIndex], username) == 0) {
+			userFound = true;
+			break;
+		}
+	}
+
+	// If recipient not found, return, dont do anything
+	if (!userFound) {
+		printf(SERVER_DEBUG_NAME"Error: Username '%s' not found!\n", username);
+		return;
+	}
+
+	// Copy message to allocated memory
+	int userMailIndex = userMailCount[userIndex];
+	userMailCount[userIndex]++;
+	strcpy(userMessageBoxSubjects[userIndex][userMailIndex], messageSubject);
+	strcpy(userMessageBoxTexts[userIndex][userMailIndex], messageText);
+
 	SetState(ServerState_Connected);
 }
 
 // ServerState_Connected -> ServerState_Connected
 void Server::Server_CheckMail() {
-	// TODO: Check parameters for user info. If there is mail for the user get number of mails
-	//       waiting and send it back as parameter for message ServerMSG_CheckMailResponse
-	printf(SERVER_DEBUG_NAME"TODO: Server_CheckMail\n");
+	// Find user in database
+	bool userFound = false;
+	int userIndex = 0;
+	for (; userIndex < numberOfUsernames; userIndex++) {
+		if (strcmp(usernames[userIndex], username) == 0) {
+			userFound = true;
+			break;
+		}
+	}
+
+	// If recipient not found, return, dont do anything
+	if (!userFound) {
+		printf(SERVER_DEBUG_NAME"Error: Username '%s' not found!\n", username);
+		return;
+	}
+
+	printf(SERVER_DEBUG_NAME"User '%s' checked inbox: %d unread\n", username, userMailCount[userIndex]);
+
+	// Send back the number of unread messages to client
+	buffer[0] = ServerMSG_CheckMailResponse;
+	buffer[1] = userMailCount[userIndex];
+	buffer[2] = '\0';
+	SendBufferToClient();
+
 	SetState(ServerState_Connected);
 }
 
 // ServerState_Connected -> ServerState_Connected
 void Server::Server_ReceiveMail() {
-	// TODO: Check parameters for user info. If there is mail for the user try and get a mail
-	//       waiting and send it back as parameter for message ServerMSG_ReceiveMailResponse.
-	//       If no mail is waiting, send error as parameter to message
-	printf(SERVER_DEBUG_NAME"TODO: Server_ReceiveMail\n");
+	// Find user in database
+	bool userFound = false;
+	int userIndex = 0;
+	for (; userIndex < numberOfUsernames; userIndex++) {
+		if (strcmp(usernames[userIndex], username) == 0) {
+			userFound = true;
+			break;
+		}
+	}
+
+	// If recipient not found, return, dont do anything
+	if (!userFound) {
+		printf(SERVER_DEBUG_NAME"Error: Username '%s' not found!\n", username);
+		return;
+	}
+
+	printf(SERVER_DEBUG_NAME"User '%s' requested to read mail\n", username);
+
+	if (userMailCount[userIndex] == 0) {
+		printf(SERVER_DEBUG_NAME"Error: no mails available for this user\n");
+		buffer[0] = ServerMSG_ReceiveMailError;
+		buffer[1] = '\0';
+		SendBufferToClient();
+		SetState(ServerState_Connected);
+		return;
+	}
+
+	// Send back the command and data to client
+	buffer[0] = ServerMSG_ReceiveMailResponse;
+	buffer[1] = '\0';
+	userMailCount[userIndex]--;
+	strcat(buffer, userMessageBoxSubjects[userIndex][userMailCount[userIndex]]);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, userMessageBoxTexts[userIndex][userMailCount[userIndex]]);
+	SendBufferToClient();
+
 	SetState(ServerState_Connected);
 }
 
@@ -126,6 +199,7 @@ void Server::Server_ReceiveMail() {
 /// NETWORK //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Send buffer contents over UDP to client socket
 void Server::SendBufferToClient() {
 	SOCKADDR_IN destAddress;
 	destAddress.sin_family = AF_INET;
@@ -135,7 +209,7 @@ void Server::SendBufferToClient() {
 	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&destAddress, sizeof(destAddress));
 }
 
-DWORD Server::TCPListener(LPVOID param) {
+DWORD Server::UDPListener(LPVOID param) {
 	Server* pParent = (Server*)param;
 	int nReceivedBytes;
 
@@ -186,7 +260,7 @@ void Server::InitSocket() {
 	}
 
 	// Then, start the thread that will listen on the the newly created socket
-	mhThread = CreateThread(NULL, 0, TCPListener, (LPVOID)this, 0, &mnThreadID);
+	mhThread = CreateThread(NULL, 0, UDPListener, (LPVOID)this, 0, &mnThreadID);
 	if (mhThread == NULL)
 	{
 		// Cannot create thread
@@ -196,20 +270,17 @@ void Server::InitSocket() {
 	}
 }
 
+// Check client string command, based on it parse data and send message to server automate
 void Server::UdpToFsm() {
-	//if (DEBUG) printf(SERVER_DEBUG_NAME"Received (%d) '%s' from client...\n", (uint8)buffer[0], buffer);
-	char tempBuff[BUFFER_SIZE];
-
-	// TODO: logic on receiving (send correct message with parameters to server automate)
-
 	// If login: parse data and send message to server automate
+	char tempBuff[BUFFER_SIZE];
 	strcpy(tempBuff, buffer);
 	tempBuff[strlen(LOGIN_COMMAND)] = '\0';
 	if (strcmp(tempBuff, LOGIN_COMMAND) == 0) {
 		strcpy(tempBuff, buffer);								// Create local copy of buffer
 		std::string str(tempBuff);								// Create string from array
-		str = str.erase(0, strlen(LOGIN_COMMAND) + 1);			// Erase login command text (left with username and password)
-		std::string user = str.substr(0, str.find(" "));		// Get username as substring
+		str = str.erase(0, strlen(LOGIN_COMMAND) + strlen(MESSAGE_SPLIT_TOKEN));			// Erase login command text (left with username and password)
+		std::string user = str.substr(0, str.find(MESSAGE_SPLIT_TOKEN));		// Get username as substring
 		str = str.erase(0, (int)user.length() + 1);				// Erase username from text
 		std::string pass = str;									// Get password as remainder
 
@@ -235,10 +306,64 @@ void Server::UdpToFsm() {
 		SendMessage(SERVER_MBX_ID);
 	}
 
-	
-	//PrepareNewMessage(0x00, ClientMSG_Login);
-	//SetMsgToAutomate(SERVER_TYPE_ID);
-	//SetMsgObjectNumberTo(0);
-	//AddParam(PARAM_USERNAME, buffer);
-	//SendMessage(SERVER_MBX_ID);
+	// If send mail: send message to server automate to process mail
+	strcpy(tempBuff, buffer);
+	tempBuff[strlen(SENDMAIL_COMMAND)] = '\0';
+	if (strcmp(tempBuff, SENDMAIL_COMMAND) == 0) {
+		strcpy(tempBuff, buffer);																// Create local copy of buffer
+		std::string str(tempBuff);																// Create string from array
+		str = str.erase(0, strlen(SENDMAIL_COMMAND) + strlen(MESSAGE_SPLIT_TOKEN));				// Erase command text
+
+		std::string user = str.substr(0, str.find(MESSAGE_SPLIT_TOKEN));						// Get username as substring
+		str = str.erase(0, (int)user.length() + strlen(MESSAGE_SPLIT_TOKEN));					// Erase username from text
+
+		std::string subject = str.substr(0, str.find(MESSAGE_SPLIT_TOKEN));						// Get subject as substring
+		str = str.erase(0, (int)subject.length() + strlen(MESSAGE_SPLIT_TOKEN));				// Erase subject from text
+
+		std::string text = str;																	// Get text as substring
+
+		strcpy(username, user.c_str());
+		strcpy(messageSubject, subject.c_str());
+		strcpy(messageText, text.c_str());
+
+		PrepareNewMessage(0x00, ClientMSG_SendMail);
+		SetMsgToAutomate(SERVER_TYPE_ID);
+		SetMsgObjectNumberTo(0);
+		SendMessage(SERVER_MBX_ID);
+	}
+
+	// If check mail: send message to server automate
+	strcpy(tempBuff, buffer);
+	tempBuff[strlen(CHECKMAIL_COMMAND)] = '\0';
+	if (strcmp(tempBuff, CHECKMAIL_COMMAND) == 0) {
+		strcpy(tempBuff, buffer);																// Create local copy of buffer
+		std::string str(tempBuff);																// Create string from array
+		str = str.erase(0, strlen(CHECKMAIL_COMMAND) + strlen(MESSAGE_SPLIT_TOKEN));			// Erase command text
+
+		std::string user = str;																	// Get username as substring
+
+		strcpy(username, user.c_str());
+
+		PrepareNewMessage(0x00, ClientMSG_CheckMail);
+		SetMsgToAutomate(SERVER_TYPE_ID);
+		SetMsgObjectNumberTo(0);
+		SendMessage(SERVER_MBX_ID);
+	}
+
+	// If check mail: send message to server automate
+	strcpy(tempBuff, buffer);
+	tempBuff[strlen(RECEIVEMAIL_COMMAND)] = '\0';
+	if (strcmp(tempBuff, RECEIVEMAIL_COMMAND) == 0) {
+		strcpy(tempBuff, buffer);																// Create local copy of buffer
+		std::string str(tempBuff);																// Create string from array
+		str = str.erase(0, strlen(RECEIVEMAIL_COMMAND) + strlen(MESSAGE_SPLIT_TOKEN));			// Erase command text
+
+		std::string user = str;																	// Get username as substring
+		strcpy(username, user.c_str());
+
+		PrepareNewMessage(0x00, ClientMSG_ReceiveMail);
+		SetMsgToAutomate(SERVER_TYPE_ID);
+		SetMsgObjectNumberTo(0);
+		SendMessage(SERVER_MBX_ID);
+	}
 }

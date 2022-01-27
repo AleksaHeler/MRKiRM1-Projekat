@@ -19,7 +19,6 @@ class Client : public FiniteStateMachine {
 	uint8	GetMbxId();
 	uint8	GetAutomate();
 	uint32	GetObject();
-	//void	ResetData();
 
 	// Client states
 	enum	States {
@@ -43,31 +42,39 @@ class Client : public FiniteStateMachine {
 
 	// State: ClientState_ReceiveMail
 	void	Client_ReceiveMailResponse();	// -> ClientState_Connected
+	void	Client_ReceiveMailError();		// -> ClientState_Connected
 
 
 public:
+	// Constructor/destructor
 	Client();
 	~Client();
 
 	void Initialize();
 
 	// Public functions for client
-	void Login(const char* username, const char* password);			// -> ClientState_Connecting
-	void Logout();													// -> ClientState_Disconnecting
-	void SendMail();												// -> ClientState_Connected
-	void CheckMail();												// -> ClientState_CheckMail
-	void ReceiveMail();												// -> ClientState_ReceiveMail
+	void Login(const char* username, const char* password);							// -> ClientState_Connecting
+	void Logout();																	// -> ClientState_Disconnecting
+	void SendMail(const char* username, const char* subject, const char* text);		// -> ClientState_Connected
+	void CheckMail(const char* username);											// -> ClientState_CheckMail
+	void ReceiveMail(const char* username);											// -> ClientState_ReceiveMail
 
 protected:
-	static DWORD WINAPI TCPListener(LPVOID);
+	static DWORD WINAPI UDPListener(LPVOID);
 
+	// Network vars
 	SOCKET mSocket;
 	SOCKADDR_IN socketAddress;
 	SOCKADDR_IN serverAddress;
+
+	// Thread vars
 	HANDLE mhThread;
 	DWORD mnThreadID;
+
+	// Buffers
 	char buffer[BUFFER_SIZE];
 
+	// Network helper functions
 	void InitSocket();
 	void SendBufferToServer();
 	void UdpToFsm();

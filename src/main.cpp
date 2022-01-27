@@ -2,8 +2,6 @@
 #include "MailServer.h"
 #include "MailClient.h"
 
-// TODO: call Client.SendData("Hello world!");
-
 // FSM system instance
 static FSMSystem sys(2 /* max number of automates types */, 2 /* max number of msg boxes */);
 Server server;
@@ -74,6 +72,38 @@ int main(int argc, char** argv) {
 	printf("\n\t\t\t========== Logging in error ==========\n");
 	client.Login("petar", "123456");
 	Sleep(2000);
+
+	printf("\n\t\t\t========== Logging in right this time ==========\n");
+	client.Login("aleksa", "123456");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Check mail ==========\n");
+	client.CheckMail("aleksa");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Send mail ==========\n");
+	client.SendMail("aleksa", "Hello!", "Hello world!");
+	Sleep(4000);
+
+	printf("\n\t\t\t========== Check mail ==========\n");
+	client.CheckMail("aleksa");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Receive mail ==========\n");
+	client.ReceiveMail("aleksa");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Check mail again ==========\n");
+	client.CheckMail("aleksa");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Receive mail again ==========\n");
+	client.ReceiveMail("aleksa");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Logging out ==========\n");
+	client.Logout();
+	Sleep(4000);
 
 	// Wait for input to end
 	_getch();

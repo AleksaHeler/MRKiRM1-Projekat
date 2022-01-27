@@ -4,6 +4,7 @@
 
 #include <fsm.h>
 #include <fsmsystem.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
 
@@ -47,17 +48,19 @@ const uint16 ClientMSG_ReceiveMail		= 0x0105;
 #define SERVER_PORT 5000
 #define BUFFER_SIZE 1024
 #define MAX_STRING_SIZE 64
+#define MAX_MAIL_SIZE 1024
+#define MAX_MESSAGES_IN_INBOX 64
 
 // Message parameter defines
-#define PARAM_USERNAME 0x01				// Login data
-#define PARAM_PASSWORD 0x02
-#define PARAM_MAIL_COUNT 0x04			// For checking inbox, how many mails unread
-#define PARAM_MESSAGE_SUBJECT 0x11		// For receiving/sending mail, title and content
-#define PARAM_MESSAGE_TEXT 0x12
+#define PARAM_MAIL_COUNT 0x01			// For checking inbox, how many mails unread
 
 // Commands sent as string over internet
 #define LOGIN_COMMAND "login"
 #define LOGOUT_COMMAND "logout"
+#define SENDMAIL_COMMAND "send"
+#define CHECKMAIL_COMMAND "check"
+#define RECEIVEMAIL_COMMAND "receive"
+#define MESSAGE_SPLIT_TOKEN "|"
 
 
 #endif // CONST_H

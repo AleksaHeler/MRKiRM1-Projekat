@@ -47,6 +47,7 @@ void Client::Initialize() {
 	InitEventProc(ClientState_Disconnecting, ServerMSG_LogoutOk, (PROC_FUN_PTR)&Client::Client_Disconnect);
 	InitEventProc(ClientState_CheckMail, ServerMSG_CheckMailResponse, (PROC_FUN_PTR)&Client::Client_CheckMailResponse);
 	InitEventProc(ClientState_ReceiveMail, ServerMSG_ReceiveMailResponse, (PROC_FUN_PTR)&Client::Client_ReceiveMailResponse);
+	InitEventProc(ClientState_ReceiveMail, ServerMSG_ReceiveMailError, (PROC_FUN_PTR)&Client::Client_ReceiveMailError);
 }
 
 
@@ -74,14 +75,33 @@ void Client::Client_Disconnect() {
 
 // ClientState_CheckMail -> ClientState_Connected
 void Client::Client_CheckMailResponse() {
+	byte mailCount = 0;
+	GetParamByte(PARAM_MAIL_COUNT, mailCount);
+	printf(CLIENT_DEBUG_NAME"Inbox: %d unread messages\n", mailCount);
 	SetState(ClientState_Connected);
 }
 
 // ClientState_ReceiveMail -> ClientState_Connected
 void Client::Client_ReceiveMailResponse() {
+	std::string str(buffer);																// Create string from array
+	str = str.erase(0, 1);																	// Erase command text
+
+	std::string subject = str.substr(0, str.find(MESSAGE_SPLIT_TOKEN));						// Get subject as substring
+	str = str.erase(0, (int)subject.length() + strlen(MESSAGE_SPLIT_TOKEN));				// Erase subject from string
+
+	std::string text = str;																	// Get text as substring
+
+	printf(CLIENT_DEBUG_NAME"Received mail:\n");
+	printf(CLIENT_DEBUG_NAME"\t subject: %s\n", subject.c_str());
+	printf(CLIENT_DEBUG_NAME"\t    text: %s\n", text.c_str());
+
 	SetState(ClientState_Connected);
 }
 
+void Client::Client_ReceiveMailError() {
+	printf(CLIENT_DEBUG_NAME"Error: error while receiving mail! Maybe no mail available. Check with client.CheckMail('username');");
+	SetState(ClientState_Connected);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTIONS /////////////////////////////////////////////////////////////////
@@ -96,9 +116,9 @@ void Client::Login(const char* username, const char* password) {
 	}
 	strcpy(buffer, "\0");
 	strcat(buffer, LOGIN_COMMAND);
-	strcat(buffer, " ");
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
 	strcat(buffer, username);
-	strcat(buffer, " ");
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
 	strcat(buffer, password);
 
 	SendBufferToServer();
@@ -106,7 +126,6 @@ void Client::Login(const char* username, const char* password) {
 }
 
 // void Logout();			// ClientState_Connected	->	ClientState_Disconnecting
-// TODO: if connected, send disconnect message and change state to await response
 void Client::Logout() {
 	if(GetState() != ClientState_Connected){
 		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
@@ -120,13 +139,62 @@ void Client::Logout() {
 }
 
 // void SendMail();			// ClientState_Connected	->	ClientState_Connected
-void Client::SendMail() {}
+void Client::SendMail(const char* username, const char* subject, const char* text) {
+	if (GetState() != ClientState_Connected) {
+		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		return;
+	}
+
+	// Fill buffer with command and data
+	strcpy(buffer, "\0");
+	strcat(buffer, SENDMAIL_COMMAND);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, username);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, subject);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, text);
+
+	// Send request
+	SendBufferToServer();
+	SetState(ClientState_Connected);
+}
 
 // void CheckMail();		// ClientState_Connected	->	ClientState_CheckMail
-void Client::CheckMail() {}
+void Client::CheckMail(const char* username) {
+	if (GetState() != ClientState_Connected) {
+		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		return;
+	}
+
+	// Fill buffer with command and data
+	strcpy(buffer, "\0");
+	strcat(buffer, CHECKMAIL_COMMAND);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, username);
+
+	// Send request
+	SendBufferToServer();
+	SetState(ClientState_CheckMail);
+}
 
 // void ReceiveMail();		// ClientState_Connected	->	ClientState_ReceiveMail
-void Client::ReceiveMail() {}
+void Client::ReceiveMail(const char* username) {
+	if (GetState() != ClientState_Connected) {
+		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		return;
+	}
+
+	// Fill buffer with command and data
+	strcpy(buffer, "\0");
+	strcat(buffer, RECEIVEMAIL_COMMAND);
+	strcat(buffer, MESSAGE_SPLIT_TOKEN);
+	strcat(buffer, username);
+
+	// Send request
+	SendBufferToServer();
+	SetState(ClientState_ReceiveMail);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +206,7 @@ void Client::SendBufferToServer() {
 	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
 }
 
-DWORD Client::TCPListener(LPVOID param) {
+DWORD Client::UDPListener(LPVOID param) {
 	Client* pParent = (Client*)param;
 	int nReceivedBytes;
 
@@ -195,7 +263,7 @@ void Client::InitSocket() {
 	}
 
 	// Then, start the thread that will listen on the the newly created socket
-	mhThread = CreateThread(NULL, 0, TCPListener, (LPVOID)this, 0, &mnThreadID);
+	mhThread = CreateThread(NULL, 0, UDPListener, (LPVOID)this, 0, &mnThreadID);
 	if (mhThread == NULL)
 	{
 		// Cannot create thread
@@ -206,27 +274,47 @@ void Client::InitSocket() {
 }
 
 void Client::UdpToFsm() {
-	//if (DEBUG) printf(CLIENT_DEBUG_NAME"Received (%d) '%s' from server...\n", (uint8)buffer[0], buffer);
-
-	// TODO: logic on receiving (send correct message with parameters to client automate)
+	// Send different messages to client automate based on server responses
 	switch (buffer[0]) {
 	case ServerMSG_LoginOk:
-		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginOk' from server...\n");
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginOk' from server...\n");
 		PrepareNewMessage(0x00, ServerMSG_LoginOk);
 		SetMsgToAutomate(CLIENT_TYPE_ID);
 		SetMsgObjectNumberTo(GetObject());
 		SendMessage(CLIENT_MBX_ID);
 		break;
 	case ServerMSG_LoginError:
-		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginError' from server...\n");
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LoginError' from server...\n");
 		PrepareNewMessage(0x00, ServerMSG_LoginError);
 		SetMsgToAutomate(CLIENT_TYPE_ID);
 		SetMsgObjectNumberTo(GetObject());
 		SendMessage(CLIENT_MBX_ID);
 		break;
 	case ServerMSG_LogoutOk:
-		if (DEBUG) printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LogoutOk' from server...\n");
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_LogoutOk' from server...\n");
 		PrepareNewMessage(0x00, ServerMSG_LogoutOk);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	case ServerMSG_CheckMailResponse:
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_CheckMailResponse' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_CheckMailResponse);
+		AddParamByte(PARAM_MAIL_COUNT, buffer[1]);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	case ServerMSG_ReceiveMailError:
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_ReceiveMailError' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_ReceiveMailError);
+		SetMsgToAutomate(CLIENT_TYPE_ID);
+		SetMsgObjectNumberTo(GetObject());
+		SendMessage(CLIENT_MBX_ID);
+		break;
+	case ServerMSG_ReceiveMailResponse:
+		printf(CLIENT_DEBUG_NAME"Received 'ServerMSG_ReceiveMailResponse' from server...\n");
+		PrepareNewMessage(0x00, ServerMSG_ReceiveMailResponse);
 		SetMsgToAutomate(CLIENT_TYPE_ID);
 		SetMsgObjectNumberTo(GetObject());
 		SendMessage(CLIENT_MBX_ID);
@@ -234,11 +322,4 @@ void Client::UdpToFsm() {
 	default:
 		break;
 	}
-
-	// If message is login_ok or login_error, send it to client automate
-
-	//PrepareNewMessage(0x00, ClientMSG_Login);
-	//SetMsgToAutomate(CLIENT_TYPE_ID);
-	//SetMsgObjectNumberTo(GetObject());
-	//SendMessage(CLIENT_MBX_ID);
 }
