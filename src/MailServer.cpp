@@ -1,4 +1,4 @@
-#include "Server.h"
+#include "MailServer.h"
 
 #define StandardMessageCoding 0x00
 
@@ -105,7 +105,8 @@ DWORD Server::TCPListener(LPVOID param) {
 	int recvAddressLen = sizeof(recvAddress);
 
 	while (1) {
-		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&recvAddress, &recvAddressLen);
+		nReceivedBytes = recv(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0);
+		//printf("Recieved %d bytes!\n", nReceivedBytes);
 		if (nReceivedBytes == 0)
 		{
 			printf("Recieved 0 bytes!\n");
@@ -126,7 +127,7 @@ DWORD Server::TCPListener(LPVOID param) {
 
 void Server::InitSocket() {
 	// Create the socket
-	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP);
+	mSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (mSocket == INVALID_SOCKET)
 	{

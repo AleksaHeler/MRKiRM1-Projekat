@@ -57,7 +57,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>./kernel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/Mail.pch</PrecompiledHeaderOutputFile>
@@ -126,7 +125,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="MailClient.cpp" />
     <ClCompile Include="kernel\buffers.cpp" />
     <ClCompile Include="kernel\buffersQueue.cpp" />
     <ClCompile Include="kernel\Client.cpp" />
@@ -154,10 +153,10 @@
     <ClCompile Include="kernel\UdpFSM.cpp" />
     <ClCompile Include="kernel\UdpLogInterface.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="MailServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h" />
+    <ClInclude Include="MailClient.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="kernel\buffers.h" />
     <ClInclude Include="kernel\buffersQueue.h" />
@@ -189,7 +188,7 @@
     <ClInclude Include="kernel\UdpFSM.h" />
     <ClInclude Include="kernel\UdpLogInterface.h" />
     <ClInclude Include="kernel\uniSock.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="MailServer.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="kernel\KernelLib.lib" />

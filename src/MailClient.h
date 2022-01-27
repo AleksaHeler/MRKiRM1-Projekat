@@ -50,7 +50,7 @@ public:
 	~Client();
 
 	void Initialize();
-	void SendData(uint8 dst, uint8 len, const char* data);
+	void SendData(const char* data);
 
 	// Public functions for client
 	void Login();			// -> ClientState_Connecting

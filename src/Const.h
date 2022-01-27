@@ -5,9 +5,11 @@
 #include <fsm.h>
 #include <fsmsystem.h>
 #include <stdio.h>
+#include <conio.h>
 
 #include "kernelTypes.h"
 #include "stdMsgpc16pl16.h"
+#include "logfile.h"
 #include "NetFSM.h"
 
 
@@ -19,6 +21,7 @@ const uint8 CLIENT_TYPE_ID = 0x02;
 const uint8 SERVER_MBX_ID = 0x01;
 const uint8 CLIENT_MBX_ID = 0x02;
 
+#define CLIENT_COUNT 2
 
 // Server messages:
 const uint16 ServerMSG_LoginOk				= 0x0001;

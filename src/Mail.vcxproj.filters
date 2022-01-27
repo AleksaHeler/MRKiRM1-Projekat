@@ -15,9 +15,6 @@
     <ClCompile Include="kernel\buffersQueue.cpp">
       <Filter>kernel</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\Client.cpp">
-      <Filter>kernel</Filter>
-    </ClCompile>
     <ClCompile Include="kernel\Distribution.cpp">
       <Filter>kernel</Filter>
     </ClCompile>
@@ -87,18 +84,16 @@
     <ClCompile Include="kernel\UdpLogInterface.cpp">
       <Filter>kernel</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="MailClient.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="MailServer.cpp" />
+    <ClCompile Include="kernel\Client.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kernel\buffers.h">
       <Filter>kernel</Filter>
     </ClInclude>
     <ClInclude Include="kernel\buffersQueue.h">
-      <Filter>kernel</Filter>
-    </ClInclude>
-    <ClInclude Include="kernel\Client.h">
       <Filter>kernel</Filter>
     </ClInclude>
     <ClInclude Include="kernel\Distribution.h">
@@ -182,9 +177,10 @@
     <ClInclude Include="kernel\uniSock.h">
       <Filter>kernel</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h" />
+    <ClInclude Include="MailClient.h" />
     <ClInclude Include="Const.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="MailServer.h" />
+    <ClInclude Include="kernel\Client.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="kernel\KernelLib.lib">

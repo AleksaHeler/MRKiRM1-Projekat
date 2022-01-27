@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "MailClient.h"
 
 #define StandardMessageCoding 0x00
 
@@ -54,31 +54,50 @@ void Client::Initialize() {
 /// STATE TRANSITION FUNCTIONS ///////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-// State: ClientState_Connecting
-//void	Client_LoginOK();				// -> ClientState_Connected
-//void	Client_LoginError();			// -> ClientState_Idle
+// ClientState_Connecting -> ClientState_Connected
+void Client::Client_LoginOK() {
+	SetState(ClientState_Connected);
+}
 
-// State: ClientState_Disconnecting
-//void	Client_Disconnect();			// -> ClientState_Idle
+// ClientState_Connecting -> ClientState_Idle
+void Client::Client_LoginError() {
+	SetState(ClientState_Idle);
+}
 
-// State: ClientState_CheckMail
-//void	Client_CheckMailResponse();		// -> ClientState_Connected
+// ClientState_Disconnecting -> ClientState_Idle
+void Client::Client_Disconnect() {
+	SetState(ClientState_Idle);
+}
 
-// State: ClientState_ReceiveMail
-//void	Client_ReceiveMailResponse();	// -> ClientState_Connected
+// ClientState_CheckMail -> ClientState_Connected
+void Client::Client_CheckMailResponse() {
+	SetState(ClientState_Connected);
+}
+
+// ClientState_ReceiveMail -> ClientState_Connected
+void Client::Client_ReceiveMailResponse() {
+	SetState(ClientState_Connected);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTIONS /////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-//void SendData(uint8 dst, uint8 len, const char* data);
+//void SendData(const char* data);
 // void Login();			// ClientState_Idle			->	ClientState_Connecting
 // void Logout();			// ClientState_Connected	->	ClientState_Disconnecting
 // void SendMail();			// ClientState_Connected	->	ClientState_Connected
 // void CheckMail();		// ClientState_Connected	->	ClientState_CheckMail
 // void ReceiveMail();		// ClientState_Connected	->	ClientState_ReceiveMail
 
+
+void Client::SendData(const char* data) {
+	strcpy(buffer, data);
+	send(mSocket, buffer, BUFFER_SIZE, 0);
+	//sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+	printf("Sent '%s' to server\n", buffer);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// NETWORK //////////////////////////////////////////////////////////////////////////
@@ -90,10 +109,11 @@ DWORD Client::TCPListener(LPVOID param) {
 
 	int slen = sizeof(pParent->serverAddress);
 
-	printf("Node %d UDP listening on port %d\n", pParent->GetObject(), ntohs(pParent->socketAddress.sin_port));
+	printf("Client TCP listening on port %d\n",ntohs(pParent->socketAddress.sin_port));
 
 	while(1) {
-		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
+		nReceivedBytes = recv(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0);
+		//nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
 		if (nReceivedBytes == 0)
 		{
 			printf("Recv 0 bytes!\n");
@@ -114,7 +134,7 @@ DWORD Client::TCPListener(LPVOID param) {
 
 void Client::InitSocket() {
 	// Create the socket
-	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP);
+	mSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (mSocket == INVALID_SOCKET)
 	{
 		printf("Client: socket() failed! Error : %ld\n", WSAGetLastError());
@@ -126,9 +146,9 @@ void Client::InitSocket() {
 	serverAddress.sin_port = htons(SERVER_PORT);
 	serverAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
 
-	// Bind to port (client port number will be server port num + 1 + clients ID) (IDs start from 0) 
+	// Bind to port (client port number will be server port num + 1 + clients ID)
 	socketAddress.sin_family = AF_INET;
-	socketAddress.sin_port = htons(SERVER_PORT + GetObject() + 1);
+	socketAddress.sin_port = htons(SERVER_PORT + 1 + GetObject());
 	socketAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
 
 	if (bind(mSocket, (SOCKADDR*)&socketAddress, sizeof(socketAddress)) == SOCKET_ERROR)
