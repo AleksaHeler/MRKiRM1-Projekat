@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 	/////////////////////////////////////////////////////////////////////////////////////
 	/// USER INPUT //////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////
-	printf("Press any key to continue...\n");
+	printf("Press any key to start testing...\n");
 	_getch();
 	printf("\n\t\t\t========== Logging in ==========\n");
 	client.Login("aleksa", "123456");
@@ -71,6 +71,14 @@ int main(int argc, char** argv) {
 
 	printf("\n\t\t\t========== Logging in error ==========\n");
 	client.Login("petar", "123456");
+	Sleep(2000);
+
+	printf("\n\t\t\t========== Try stuff without login (send, check, receive) ==========\n");
+	client.SendMail("aleksa", "Hello!", "Hello world!");
+	Sleep(2000);
+	client.CheckMail("aleksa");
+	Sleep(2000);
+	client.ReceiveMail("aleksa");
 	Sleep(2000);
 
 	printf("\n\t\t\t========== Logging in right this time ==========\n");
@@ -106,6 +114,7 @@ int main(int argc, char** argv) {
 	Sleep(4000);
 
 	// Wait for input to end
+	printf("Press any key to stop system...\n");
 	_getch();
 
 	// Notify the system to stop - this causes the thread to finish
