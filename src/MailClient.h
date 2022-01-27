@@ -67,11 +67,12 @@ protected:
 	SOCKADDR_IN serverAddress;
 	HANDLE mhThread;
 	DWORD mnThreadID;
-	uint16 mnMaxMsgSize;
+	//uint16 mnMaxMsgSize;
+	//char sendBuffer[BUFFER_SIZE];
 	char buffer[BUFFER_SIZE];
 
 	void InitSocket();
-	void TcpToFsm();
+	void UdpToFsm();
 };
 
 

@@ -50,11 +50,11 @@ protected:
 	SOCKADDR_IN socketAddress;
 	HANDLE mhThread;
 	DWORD mnThreadID;
-	uint16 mnMaxMsgSize;
+	//uint16 mnMaxMsgSize;
 	char buffer[BUFFER_SIZE];
 
 	void InitSocket();
-	void TcpToFsm();
+	void UdpToFsm();
 };
 
 

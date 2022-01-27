@@ -94,8 +94,8 @@ void Client::Client_ReceiveMailResponse() {
 
 void Client::SendData(const char* data) {
 	strcpy(buffer, data);
-	send(mSocket, buffer, BUFFER_SIZE, 0);
-	//sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+	//send(mSocket, sendBuffer, BUFFER_SIZE, 0);
+	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
 	printf("Sent '%s' to server\n", buffer);
 }
 
@@ -109,11 +109,10 @@ DWORD Client::TCPListener(LPVOID param) {
 
 	int slen = sizeof(pParent->serverAddress);
 
-	printf("Client TCP listening on port %d\n",ntohs(pParent->socketAddress.sin_port));
+	printf("Client UDP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
 
 	while(1) {
-		nReceivedBytes = recv(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0);
-		//nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
+		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&pParent->serverAddress, &slen);
 		if (nReceivedBytes == 0)
 		{
 			printf("Recv 0 bytes!\n");
@@ -125,7 +124,7 @@ DWORD Client::TCPListener(LPVOID param) {
 			printf("Client recieve error: %d\n", err);
 			continue;
 		}
-		pParent->TcpToFsm();
+		pParent->UdpToFsm();
 		Sleep(500);
 	};
 
@@ -134,7 +133,7 @@ DWORD Client::TCPListener(LPVOID param) {
 
 void Client::InitSocket() {
 	// Create the socket
-	mSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (mSocket == INVALID_SOCKET)
 	{
 		printf("Client: socket() failed! Error : %ld\n", WSAGetLastError());
@@ -169,11 +168,10 @@ void Client::InitSocket() {
 	}
 }
 
-void Client::TcpToFsm() {
-	printf("[TcpToFsm] Buffer: %s\n", buffer);
+void Client::UdpToFsm() {
+	printf("[UdpToFsm] Buffer: %s\n", buffer);
 	//PrepareNewMessage(0x00, ClientMSG_Login);
 	//SetMsgToAutomate(CLIENT_TYPE_ID);
 	//SetMsgObjectNumberTo(GetObject());
-
 	//SendMessage(CLIENT_MBX_ID);
 }

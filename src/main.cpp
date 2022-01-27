@@ -25,6 +25,8 @@ DWORD WINAPI SystemThread(void* data) {
 	printf("[*] Initializing system...\n");
 	sys.InitKernel(myBuffClassNo, myBuffsCount, myBuffsLength, 2);
 
+	// Add Server automate to the system 
+	sys.Add(&server, SERVER_TYPE_ID, 1, false);
 
 	// Add Clients automates to the system 
 	sys.Add(&clients[0], CLIENT_TYPE_ID, CLIENT_COUNT, true);
@@ -32,9 +34,6 @@ DWORD WINAPI SystemThread(void* data) {
 	{
 		sys.Add(&clients[i], CLIENT_TYPE_ID);
 	}
-
-	// Add Server automate to the system 
-	sys.Add(&server, SERVER_TYPE_ID, 1, false);
 
 	// Starts the system - dispatches system messages
 	printf("[*] Starting system...\n");
@@ -58,7 +57,6 @@ int main(int argc, char** argv) {
 
 	// Start main thread
 	thread_handle = CreateThread(NULL, 0, SystemThread, NULL, 0, &thread_id);
-	Sleep(1000);
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	/// USER INPUT //////////////////////////////////////////////////////////////////////
@@ -66,15 +64,15 @@ int main(int argc, char** argv) {
 	printf("Press any key to send data...\n");
 	_getch();
 	clients[0].SendData("Hello world!");
-	Sleep(500);
 
 	// Wait for input to end
 	_getch();
 
 	// Notify the system to stop - this causes the thread to finish
 	printf("[*] Stopping system...\n");
-	WSACleanup();
 	sys.StopSystem();
+	Sleep(2000);
+	WSACleanup();
 
 	// Free the thread handle
 	CloseHandle(thread_handle);

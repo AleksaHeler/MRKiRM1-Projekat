@@ -99,13 +99,13 @@ DWORD Server::TCPListener(LPVOID param) {
 	Server* pParent = (Server*)param;
 	int nReceivedBytes;
 
-	printf("Server TCP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
+	printf("Server UDP listening on port %d\n", ntohs(pParent->socketAddress.sin_port));
 
 	SOCKADDR_IN recvAddress;
 	int recvAddressLen = sizeof(recvAddress);
 
 	while (1) {
-		nReceivedBytes = recv(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0);
+		nReceivedBytes = recvfrom(pParent->mSocket, pParent->buffer, BUFFER_SIZE, 0, (SOCKADDR*)&recvAddress, &recvAddressLen);
 		//printf("Recieved %d bytes!\n", nReceivedBytes);
 		if (nReceivedBytes == 0)
 		{
@@ -118,7 +118,7 @@ DWORD Server::TCPListener(LPVOID param) {
 			printf("Server recieve error: %d\n", err);
 			continue;
 		}
-		pParent->TcpToFsm();
+		pParent->UdpToFsm();
 		Sleep(500);
 	}
 
@@ -127,8 +127,7 @@ DWORD Server::TCPListener(LPVOID param) {
 
 void Server::InitSocket() {
 	// Create the socket
-	mSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
+	mSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (mSocket == INVALID_SOCKET)
 	{
 		printf("Server: socket() failed! Error : %ld\n", WSAGetLastError());
@@ -158,8 +157,8 @@ void Server::InitSocket() {
 	}
 }
 
-void Server::TcpToFsm() {
-	printf("[TcpToFsm] Buffer: %s\n", buffer);
+void Server::UdpToFsm() {
+	printf("[UdpToFsm] Buffer: %s\n", buffer);
 	//PrepareNewMessage(0x00, ClientMSG_Login);
 	//SetMsgToAutomate(SERVER_TYPE_ID);
 	//SetMsgObjectNumberTo(0);
