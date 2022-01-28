@@ -46,6 +46,7 @@ const uint16 ClientMSG_ReceiveMail		= 0x0105;
 // Network constants
 #define SERVER_ADDRESS "127.0.0.1"
 #define SERVER_PORT 5000
+
 #define BUFFER_SIZE 1024
 #define MAX_STRING_SIZE 64
 #define MAX_MAIL_SIZE 1024
