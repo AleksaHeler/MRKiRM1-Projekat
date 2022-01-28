@@ -58,60 +58,60 @@ int main(int argc, char** argv) {
 	/////////////////////////////////////////////////////////////////////////////////////
 	printf("Press any key to start testing...\n");
 	_getch();
-	printf("\n\t\t\t========== Logging in ==========\n");
+	printf("\n\t\t\t\t\t========== Logging in ==========\n");
 	client.Login("aleksa", "123456");
-	Sleep(2000);
-	printf("\n\t\t\t========== Logging out ==========\n");
+	Sleep(1000);
+	printf("\n\t\t\t\t\t========== Logging out ==========\n");
 	client.Logout();
-	Sleep(4000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Logging in error ==========\n");
+	printf("\n\t\t\t\t\t========== Logging in error ==========\n");
 	client.Login("aleksa", "wrongpassword");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Logging in error ==========\n");
+	printf("\n\t\t\t\t\t========== Logging in error ==========\n");
 	client.Login("petar", "123456");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Try stuff without login (send, check, receive) ==========\n");
+	printf("\n\t\t\t\t\t========== Try send, check, receive without login ==========\n");
 	client.SendMail("aleksa", "Hello!", "Hello world!");
-	Sleep(2000);
+	Sleep(1000);
 	client.CheckMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 	client.ReceiveMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Logging in right this time ==========\n");
+	printf("\n\t\t\t\t\t========== Logging in right this time ==========\n");
 	client.Login("aleksa", "123456");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Check mail ==========\n");
+	printf("\n\t\t\t\t\t========== Check mail ==========\n");
 	client.CheckMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Send mail ==========\n");
+	printf("\n\t\t\t\t\t========== Send mail ==========\n");
 	client.SendMail("aleksa", "Hello!", "Hello world!");
-	Sleep(4000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Check mail ==========\n");
+	printf("\n\t\t\t\t\t========== Check mail ==========\n");
 	client.CheckMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Receive mail ==========\n");
+	printf("\n\t\t\t\t\t========== Receive mail ==========\n");
 	client.ReceiveMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Check mail again ==========\n");
+	printf("\n\t\t\t\t\t========== Check mail again ==========\n");
 	client.CheckMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Receive mail again ==========\n");
+	printf("\n\t\t\t\t\t========== Receive mail again ==========\n");
 	client.ReceiveMail("aleksa");
-	Sleep(2000);
+	Sleep(1000);
 
-	printf("\n\t\t\t========== Logging out ==========\n");
+	printf("\n\t\t\t\t\t========== Logging out ==========\n");
 	client.Logout();
-	Sleep(4000);
+	Sleep(1000);
 
 	// Wait for input to end
 	printf("Press any key to stop system...\n");
@@ -120,7 +120,6 @@ int main(int argc, char** argv) {
 	// Notify the system to stop - this causes the thread to finish
 	printf("[*] Stopping system...\n");
 	sys.StopSystem();
-	Sleep(5000);
 
 	// Free the thread handle
 	CloseHandle(thread_handle);

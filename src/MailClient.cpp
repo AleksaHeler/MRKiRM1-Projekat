@@ -9,7 +9,7 @@
 
 // Constructor/destructor
 Client::Client() : FiniteStateMachine(CLIENT_TYPE_ID, CLIENT_MBX_ID, 0, 6, 2) { }
-Client::~Client() { }
+Client::~Client() { CloseSocket(); }
 
 // Getters
 uint8 Client::GetAutomate() { return CLIENT_TYPE_ID; }
@@ -99,7 +99,7 @@ void Client::Client_ReceiveMailResponse() {
 }
 
 void Client::Client_ReceiveMailError() {
-	printf(CLIENT_DEBUG_NAME"Error: error while receiving mail! Maybe no mail available. Check with client.CheckMail('username');");
+	printf(CLIENT_DEBUG_NAME"Error: error while receiving mail! Maybe no mail available. Check with client.CheckMail('username');\n");
 	SetState(ClientState_Connected);
 }
 
@@ -111,7 +111,7 @@ void Client::Client_ReceiveMailError() {
 // Send login message with username and password to server via net, change state to connecting to await response
 void Client::Login(const char* username, const char* password) {
 	if (GetState() != ClientState_Idle) {
-		printf(CLIENT_DEBUG_NAME"Error: tried to login while not in idle state!");
+		printf(CLIENT_DEBUG_NAME"Error: tried to login while not in idle state!\n");
 		return;
 	}
 	strcpy(buffer, "\0");
@@ -128,7 +128,7 @@ void Client::Login(const char* username, const char* password) {
 // void Logout();			// ClientState_Connected	->	ClientState_Disconnecting
 void Client::Logout() {
 	if(GetState() != ClientState_Connected){
-		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!\n");
 		return;
 	}
 
@@ -141,7 +141,7 @@ void Client::Logout() {
 // void SendMail();			// ClientState_Connected	->	ClientState_Connected
 void Client::SendMail(const char* username, const char* subject, const char* text) {
 	if (GetState() != ClientState_Connected) {
-		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		printf(CLIENT_DEBUG_NAME"Error: tried to send mail while not in connected state!\n");
 		return;
 	}
 
@@ -163,7 +163,7 @@ void Client::SendMail(const char* username, const char* subject, const char* tex
 // void CheckMail();		// ClientState_Connected	->	ClientState_CheckMail
 void Client::CheckMail(const char* username) {
 	if (GetState() != ClientState_Connected) {
-		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		printf(CLIENT_DEBUG_NAME"Error: tried to check mail while not in connected state!\n");
 		return;
 	}
 
@@ -181,7 +181,7 @@ void Client::CheckMail(const char* username) {
 // void ReceiveMail();		// ClientState_Connected	->	ClientState_ReceiveMail
 void Client::ReceiveMail(const char* username) {
 	if (GetState() != ClientState_Connected) {
-		printf(CLIENT_DEBUG_NAME"Error: tried to logout while not in connected state!");
+		printf(CLIENT_DEBUG_NAME"Error: tried to receive mail while not in connected state!\n");
 		return;
 	}
 
@@ -271,6 +271,12 @@ void Client::InitSocket() {
 		mSocket = INVALID_SOCKET;
 		return;
 	}
+}
+
+void Client::CloseSocket(){
+	TerminateThread(mhThread, 0);
+	closesocket(mSocket);
+	mSocket = INVALID_SOCKET;
 }
 
 void Client::UdpToFsm() {

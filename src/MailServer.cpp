@@ -9,7 +9,7 @@
 
 // Constructor/destructor
 Server::Server() : FiniteStateMachine(SERVER_TYPE_ID, SERVER_MBX_ID, 0, 2, 4) {}
-Server::~Server() {}
+Server::~Server() { CloseSocket(); }
 
 // Getters
 uint8 Server::GetAutomate() { return SERVER_TYPE_ID; }
@@ -185,6 +185,7 @@ void Server::Server_ReceiveMail() {
 	// Send back the command and data to client
 	buffer[0] = ServerMSG_ReceiveMailResponse;
 	buffer[1] = '\0';
+	//strcat(buffer, MESSAGE_SPLIT_TOKEN);
 	userMailCount[userIndex]--;
 	strcat(buffer, userMessageBoxSubjects[userIndex][userMailCount[userIndex]]);
 	strcat(buffer, MESSAGE_SPLIT_TOKEN);
@@ -268,6 +269,12 @@ void Server::InitSocket() {
 		mSocket = INVALID_SOCKET;
 		return;
 	}
+}
+
+void Server::CloseSocket(){
+	TerminateThread(mhThread, 0);
+	closesocket(mSocket);
+	mSocket = INVALID_SOCKET;
 }
 
 // Check client string command, based on it parse data and send message to server automate

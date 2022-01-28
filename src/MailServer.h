@@ -77,6 +77,7 @@ protected:
 
 	// Network helper functions
 	void InitSocket();
+	void CloseSocket();
 	void SendBufferToClient();
 	void UdpToFsm();
 };
