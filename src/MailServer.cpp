@@ -97,7 +97,9 @@ void Server::Server_Logout() {
 // ServerState_Connected -> ServerState_Connected
 void Server::Server_SendMail() {
 	// Store message where its headed
-	printf(SERVER_DEBUG_NAME"Client send mail:\n\tto: %s\n\tsubject: %s\n\ttext: %s", username, messageSubject, messageText);
+	printf(SERVER_DEBUG_NAME"Client send mail to: %s\n", username);
+	printf(SERVER_DEBUG_NAME"            subject: %s\n", messageSubject);
+	printf(SERVER_DEBUG_NAME"               text: %s\n", messageText);
 
 	// Find user that will receive mail
 	bool userFound = false;
@@ -206,7 +208,7 @@ void Server::SendBufferToClient() {
 	destAddress.sin_family = AF_INET;
 	destAddress.sin_port = htons(SERVER_PORT + 1);
 	destAddress.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
-	if (DEBUG) printf("[Server] Sending (%d) '%s' to client...\n", (uint8)buffer[0], buffer);
+	if (DEBUG) printf(SERVER_DEBUG_NAME"Sending (%d) '%s' to client...\n", (uint8)buffer[0], buffer);
 	sendto(mSocket, buffer, strlen(buffer), 0, (SOCKADDR*)&destAddress, sizeof(destAddress));
 }
 
@@ -273,6 +275,7 @@ void Server::InitSocket() {
 
 void Server::CloseSocket(){
 	TerminateThread(mhThread, 0);
+	Sleep(100);
 	closesocket(mSocket);
 	mSocket = INVALID_SOCKET;
 }
@@ -357,7 +360,7 @@ void Server::UdpToFsm() {
 		SendMessage(SERVER_MBX_ID);
 	}
 
-	// If check mail: send message to server automate
+	// If receive mail: send message to server automate
 	strcpy(tempBuff, buffer);
 	tempBuff[strlen(RECEIVEMAIL_COMMAND)] = '\0';
 	if (strcmp(tempBuff, RECEIVEMAIL_COMMAND) == 0) {

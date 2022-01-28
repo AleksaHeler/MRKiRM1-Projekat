@@ -15,8 +15,8 @@
 
 
 const bool DEBUG = true;
-#define SERVER_DEBUG_NAME "[Server] "
-#define CLIENT_DEBUG_NAME "\t\t\t\t\t\t\t\t\t\t[CLIENT] "
+#define SERVER_DEBUG_NAME "\t\t\t\t\t\t\t\t\t\t[Server] "
+#define CLIENT_DEBUG_NAME "[CLIENT] "
 
 
 // FSM IDs

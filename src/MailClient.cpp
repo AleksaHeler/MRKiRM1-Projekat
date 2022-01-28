@@ -275,6 +275,7 @@ void Client::InitSocket() {
 
 void Client::CloseSocket(){
 	TerminateThread(mhThread, 0);
+	Sleep(100);
 	closesocket(mSocket);
 	mSocket = INVALID_SOCKET;
 }
